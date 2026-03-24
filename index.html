@@ -13,9 +13,12 @@ body{font-family:'Noto Sans JP',sans-serif;background:#f5f3ef;color:#1a1410;min-
 .hdr-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .hdr-title{font-size:clamp(14px,3vw,20px);font-weight:900;letter-spacing:.06em}
 .hdr-sub{font-size:10px;opacity:.75;letter-spacing:.1em;margin-top:2px}
-.hdr-stats{display:flex;gap:8px;flex-wrap:wrap}
+.hdr-stats{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .stat{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:4px 11px;font-size:12px;font-weight:500;white-space:nowrap}
 .stat b{font-size:15px;font-weight:900}
+.live-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;display:inline-block;margin-right:4px;animation:pulse 2s infinite}
+.live-dot.off{background:#f87171;animation:none}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
 .tabs{max-width:1100px;margin:0 auto;padding:12px 12px 0;display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .tab{padding:8px 14px;border-radius:10px 10px 0 0;border:1.5px solid #ddd;border-bottom:none;background:#ede9e2;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;color:#8a7a6a;transition:all .15s;white-space:nowrap;flex-shrink:0}
@@ -37,18 +40,16 @@ body{font-family:'Noto Sans JP',sans-serif;background:#f5f3ef;color:#1a1410;min-
 .pill.on-B{background:#1d6fae;border-color:#1d6fae;color:#fff}
 .pill.on-C{background:#6b7280;border-color:#6b7280;color:#fff}
 
-/* Legend */
 .legend{display:flex;gap:12px;flex-wrap:wrap;padding:10px 0 0;font-size:12px;color:#9b8878}
 .li{display:flex;align-items:center;gap:5px}
 .ldot{width:9px;height:9px;border-radius:3px;flex-shrink:0}
 
-/* ===== DESKTOP TABLE ===== */
+/* Desktop table */
 .tbl-wrap{overflow-x:auto;margin-top:4px}
 table{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed}
 thead tr{background:#faf5ee}
 th{padding:10px 10px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#9b8878;border-bottom:2px solid #e8ddd0;white-space:nowrap;overflow:hidden}
 td{padding:10px 10px;border-bottom:1px solid #f5ede5;vertical-align:middle;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-/* column widths */
 col.c-no{width:36px}col.c-han{width:70px}col.c-w{width:44px}col.c-name{width:130px}
 col.c-g{width:44px}col.c-work{width:160px}col.c-home{width:160px}col.c-con{width:120px}col.c-op{width:90px}
 td.c-name{white-space:nowrap;font-weight:700;overflow:hidden;text-overflow:ellipsis}
@@ -66,12 +67,12 @@ tr:hover td{background:rgba(185,28,28,.02)}
 .del-btn:hover{border-color:#e74c3c;color:#e74c3c}
 .empty{padding:48px 20px;text-align:center;color:#bbb;font-size:14px}
 
-/* ===== MOBILE CARDS ===== */
+/* Mobile cards */
 .card-list{display:none;flex-direction:column;gap:10px;padding:12px 0}
-.card{background:#fafaf8;border:1.5px solid #ede8e0;border-radius:12px;padding:14px;position:relative}
+.card{background:#fafaf8;border:1.5px solid #ede8e0;border-radius:12px;padding:14px}
 .card-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
 .card-name{font-weight:700;font-size:15px;flex:1;line-height:1.3}
-.card-han{font-size:11px;color:#9b8878;background:#f0ebe3;padding:2px 8px;border-radius:20px}
+.card-han{font-size:11px;color:#9b8878;background:#f0ebe3;padding:2px 8px;border-radius:20px;white-space:nowrap}
 .card-row{display:flex;gap:6px;align-items:baseline;font-size:12px;margin-top:4px;line-height:1.5}
 .card-lbl{color:#b0a090;min-width:56px;font-size:11px;font-weight:700;flex-shrink:0}
 .card-val{color:#1a1410;word-break:break-all}
@@ -81,7 +82,7 @@ tr:hover td{background:rgba(185,28,28,.02)}
 .card-del{padding:7px 12px;border:1.5px solid transparent;border-radius:8px;background:#fff;font-family:inherit;font-size:13px;cursor:pointer;color:#ccc;transition:all .15s}
 .card-del:hover{border-color:#e74c3c;color:#e74c3c}
 
-/* INPUT */
+/* Form */
 .input-section{padding:16px 0}
 .input-header{font-size:15px;font-weight:700;margin-bottom:4px;color:#1a1410}
 .input-sub{font-size:12px;color:#9b8878;margin-bottom:16px}
@@ -93,9 +94,18 @@ tr:hover td{background:rgba(185,28,28,.02)}
 .btn-add{padding:10px 24px;background:#b91c1c;color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s}
 .btn-add:hover{background:#991b1b}
 .btn-add:disabled{background:#ddd;cursor:not-allowed}
-.btn-clear{padding:10px 16px;background:#fff;color:#7a6a5a;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:14px;cursor:pointer;transition:all .15s}
+.btn-clear{padding:10px 16px;background:#fff;color:#7a6a5a;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:14px;cursor:pointer}
 
-/* URL iframe tab */
+/* Schedule cards */
+.sched-card{border:1.5px solid #ede8e0;border-radius:12px;padding:16px;margin-bottom:10px;background:#fafaf8}
+.sched-date{font-size:12px;font-weight:700;color:#b91c1c;margin-bottom:3px;display:flex;align-items:center;gap:4px}
+.sched-shop{font-size:16px;font-weight:900;color:#1a1410;margin-bottom:6px}
+.sched-addr{font-size:12px;color:#7a6a5a;margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.sched-people-label{font-size:10px;font-weight:700;color:#b0a090;letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px}
+.sched-people{display:flex;flex-wrap:wrap;gap:5px}
+.person-tag{background:#fff3f0;color:#b91c1c;border:1.5px solid #fca5a5;border-radius:20px;padding:3px 10px;font-size:12px;font-weight:700}
+
+/* URL iframe */
 .url-frame{width:100%;border:none;display:block;height:calc(100vh - 140px);min-height:400px;border-radius:0 0 12px 12px}
 .pw-gate{padding:32px 16px;text-align:center}
 .pw-gate p{font-size:14px;color:#7a6a5a;margin-bottom:12px}
@@ -103,8 +113,19 @@ tr:hover td{background:rgba(185,28,28,.02)}
 .pw-gate input:focus{border-color:#b91c1c}
 .pw-gate button{padding:10px 18px;background:#b91c1c;color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer}
 
+/* Setup screen */
+.setup-screen{padding:32px 16px;max-width:500px;margin:0 auto}
+.setup-screen h2{font-size:16px;font-weight:700;margin-bottom:8px}
+.setup-screen p{font-size:13px;color:#7a6a5a;margin-bottom:20px;line-height:1.7}
+.setup-screen input{width:100%;padding:10px 12px;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:14px;margin-bottom:10px;outline:none}
+.setup-screen input:focus{border-color:#b91c1c}
+.setup-btn{width:100%;padding:11px;background:#b91c1c;color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px}
+.setup-btn.sec{background:#fff;color:#7a6a5a;border:1.5px solid #ddd}
+.setup-note{font-size:11px;color:#aaa;line-height:1.6;margin-top:12px;padding:10px;background:#f9f9f9;border-radius:8px}
+.step-badge{display:inline-block;background:#b91c1c;color:#fff;border-radius:50%;width:20px;height:20px;text-align:center;line-height:20px;font-size:11px;font-weight:900;margin-right:6px}
+
 /* toast */
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(12px);background:#1a1410;color:#fff;padding:11px 20px;border-radius:10px;font-size:13px;font-weight:500;z-index:999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(12px);background:#1a1410;color:#fff;padding:11px 20px;border-radius:10px;font-size:13px;font-weight:500;z-index:999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;max-width:90vw;text-overflow:ellipsis;overflow:hidden}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 /* Modal */
@@ -117,7 +138,6 @@ tr:hover td{background:rgba(185,28,28,.02)}
 .spinner{display:inline-block;width:22px;height:22px;border:2.5px solid #ddd;border-top-color:#b91c1c;border-radius:50%;animation:spin .7s linear infinite;margin-bottom:8px}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* Responsive switch */
 @media(min-width:640px){
   .hdr{padding:14px 20px}
   .tabs{padding:16px 20px 0}
@@ -128,7 +148,7 @@ tr:hover td{background:rgba(185,28,28,.02)}
 @media(max-width:639px){
   .tbl-wrap table{display:none}
   .card-list{display:flex}
-  .hdr-stats{display:none}
+  .hdr-stats .stat:last-child{display:none}
 }
 </style>
 </head>
@@ -141,22 +161,52 @@ tr:hover td{background:rgba(185,28,28,.02)}
       <div class="hdr-sub">NEPAL ASSEMBLY MEMBER ROSTER</div>
     </div>
     <div class="hdr-stats">
+      <div class="stat"><span class="live-dot off" id="liveDot"></span><span id="liveStatus">未接続</span></div>
       <div class="stat">合計 <b id="sTotal">—</b> 名</div>
-      <div class="stat">A: <b id="sA">—</b> ／ B: <b id="sB">—</b> ／ C: <b id="sC">—</b></div>
+      <div class="stat">A:<b id="sA">—</b> B:<b id="sB">—</b> C:<b id="sC">—</b></div>
     </div>
   </div>
 </div>
 
+<!-- Firebase setup screen -->
+<div id="setupScreen" style="display:none">
+  <div class="tabs"><div style="padding:12px 0 0;font-size:12px;color:#9b8878;margin-left:4px">⚙️ 初期設定</div></div>
+  <div class="content">
+    <div class="setup-screen">
+      <h2>🔥 Firebase の設定が必要です</h2>
+      <p>他のデバイスとデータを共有するには、無料の <strong>Firebase Realtime Database</strong> を使います。<br>一度だけ設定すれば、全員がリアルタイムで同じデータを見られます。</p>
+
+      <p style="font-size:13px;font-weight:700;margin-bottom:12px;color:#1a1410">
+        <span class="step-badge">1</span> <a href="https://console.firebase.google.com/" target="_blank" style="color:#b91c1c">console.firebase.google.com</a> でプロジェクトを作成
+      </p>
+      <p style="font-size:13px;font-weight:700;margin-bottom:12px;color:#1a1410">
+        <span class="step-badge">2</span> 「Realtime Database」を作成 → ルール を以下に変更：
+      </p>
+      <pre style="background:#f5f5f5;padding:10px;border-radius:8px;font-size:12px;margin-bottom:16px;overflow-x:auto">{ "rules": { ".read": true, ".write": true } }</pre>
+      <p style="font-size:13px;font-weight:700;margin-bottom:8px;color:#1a1410">
+        <span class="step-badge">3</span> データベース URL（例: https://xxx-default-rtdb.firebaseio.com）を入力：
+      </p>
+      <input type="url" id="fbUrl" placeholder="https://your-project-default-rtdb.firebaseio.com" autocomplete="off">
+      <button class="setup-btn" onclick="saveConfig()">保存して接続する</button>
+      <div class="setup-note">
+        ⚠️ ルールを <code>true</code> にすると誰でもアクセスできます。内輪のみで使用する場合はこれで問題ありません。より厳密なセキュリティが必要な場合は認証ルールを設定してください。
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="mainApp" style="display:none">
 <div class="tabs">
   <button class="tab active" onclick="showTab('view',this)">📋 名簿一覧</button>
   <button class="tab" onclick="showTab('input',this)">✏️ データ入力</button>
   <button class="tab" onclick="showTab('sched',this)">📅 予定</button>
   <button class="tab" onclick="showTab('url',this)">🔗 参考資料</button>
+  <button class="tab" onclick="showTab('cfg',this)" style="margin-left:auto">⚙️</button>
 </div>
 
 <div class="content">
 
-  <!-- ====== VIEW TAB ====== -->
+  <!-- 名簿一覧 -->
   <div id="tab-view">
     <div class="view-controls">
       <div class="search-box">
@@ -172,26 +222,16 @@ tr:hover td{background:rgba(185,28,28,.02)}
         <button class="pill" data-w="" onclick="setWari('',this)">未分類</button>
       </div>
     </div>
-
     <div class="legend">
       <div class="li"><div class="ldot" style="background:#16a34a"></div>A：去年総会に参加した人</div>
       <div class="li"><div class="ldot" style="background:#1d6fae"></div>B：過去参加・ネパールミーティング視聴してる人</div>
       <div class="li"><div class="ldot" style="background:#6b7280"></div>C：音信不通・行方不明・退転状態</div>
     </div>
-
     <div class="tbl-wrap">
       <div class="loading" id="loadMsg"><div class="spinner"></div><br>読み込み中…</div>
       <table id="mainTable" style="display:none">
-        <colgroup>
-          <col class="c-no"><col class="c-han"><col class="c-w"><col class="c-name">
-          <col class="c-g"><col class="c-work"><col class="c-home"><col class="c-con"><col class="c-op">
-        </colgroup>
-        <thead>
-          <tr>
-            <th>#</th><th>班名</th><th>割振り</th><th>氏名</th><th>性別</th>
-            <th>勤務地（店舗名）</th><th>自宅住所</th><th>連絡先</th><th>操作</th>
-          </tr>
-        </thead>
+        <colgroup><col class="c-no"><col class="c-han"><col class="c-w"><col class="c-name"><col class="c-g"><col class="c-work"><col class="c-home"><col class="c-con"><col class="c-op"></colgroup>
+        <thead><tr><th>#</th><th>班名</th><th>割振り</th><th>氏名</th><th>性別</th><th>勤務地（店舗名）</th><th>自宅住所</th><th>連絡先</th><th>操作</th></tr></thead>
         <tbody id="tbody"></tbody>
       </table>
       <div class="card-list" id="cardList"></div>
@@ -199,7 +239,60 @@ tr:hover td{background:rgba(185,28,28,.02)}
     </div>
   </div>
 
-  <!-- ====== URL TAB ====== -->
+  <!-- データ入力 -->
+  <div id="tab-input" style="display:none">
+    <div class="input-section">
+      <div class="input-header">メンバー情報を入力</div>
+      <div class="input-sub">ご自身の班のメンバー情報を入力して「追加する」を押してください</div>
+      <div class="form-grid">
+        <div class="fld"><label>班名 *</label><input type="text" id="i_han" placeholder="例：第1班・東京班"></div>
+        <div class="fld"><label>割振り</label>
+          <select id="i_wari">
+            <option value="">未分類</option>
+            <option value="A">A — 去年総会に参加した人</option>
+            <option value="B">B — 過去参加・ネパールミーティング視聴してる人</option>
+            <option value="C">C — 音信不通・行方不明・退転状態</option>
+          </select>
+        </div>
+        <div class="fld"><label>班員氏名 *</label><input type="text" id="i_name" placeholder="氏名を入力"></div>
+        <div class="fld"><label>性別</label>
+          <select id="i_gender"><option value="">未記入</option><option value="男">男</option><option value="女">女</option></select>
+        </div>
+        <div class="fld"><label>勤務地住所（店舗名）</label><input type="text" id="i_work" placeholder="勤務先住所・店舗名"></div>
+        <div class="fld"><label>自宅住所</label><input type="text" id="i_home" placeholder="自宅住所"></div>
+        <div class="fld"><label>連絡先</label><input type="text" id="i_contact" placeholder="電話番号・LINEなど"></div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-clear" onclick="clearForm()">クリア</button>
+        <button class="btn-add" id="addBtn" onclick="addMember()">追加する</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 予定 -->
+  <div id="tab-sched" style="display:none">
+    <div class="input-section">
+      <div class="input-header">予定を追加</div>
+      <div class="input-sub">訪問予定の情報を入力してください</div>
+      <div class="form-grid" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))">
+        <div class="fld" style="grid-column:1/-1"><label>日付・時間 *</label><input type="text" id="s_date" placeholder="例：4月15日 14時〜"></div>
+        <div class="fld"><label>店名 *</label><input type="text" id="s_shop" placeholder="店名を入力"></div>
+        <div class="fld"><label>住所</label><input type="text" id="s_addr" placeholder="住所を入力"></div>
+        <div class="fld" style="grid-column:1/-1"><label>行く人（予定）</label><input type="text" id="s_people" placeholder="例：田中, 鈴木, 山田（カンマ区切り）"></div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-clear" onclick="clearSchedForm()">クリア</button>
+        <button class="btn-add" id="schedAddBtn" onclick="addSched()">追加する</button>
+      </div>
+    </div>
+    <div style="border-top:1px solid #f0e8de;padding-top:16px">
+      <div id="schedLoading" class="loading"><div class="spinner"></div><br>読み込み中…</div>
+      <div id="schedList"></div>
+      <div id="schedEmpty" class="empty" style="display:none">予定がまだありません</div>
+    </div>
+  </div>
+
+  <!-- 参考資料 -->
   <div id="tab-url" style="display:none">
     <div class="pw-gate" id="pwGate">
       <p>このページはパスワードで保護されています</p>
@@ -210,94 +303,44 @@ tr:hover td{background:rgba(185,28,28,.02)}
     <iframe id="urlFrame" class="url-frame" style="display:none" src="" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
   </div>
 
-  <!-- ====== INPUT TAB ====== -->
-  <div id="tab-input" style="display:none">
+  <!-- 設定 -->
+  <div id="tab-cfg" style="display:none">
     <div class="input-section">
-      <div class="input-header">メンバー情報を入力</div>
-      <div class="input-sub">ご自身の班のメンバー情報を入力して「追加する」を押してください</div>
-      <div class="form-grid">
-        <div class="fld">
-          <label>班名 *</label>
-          <input type="text" id="i_han" placeholder="例：第1班・東京班">
-        </div>
-        <div class="fld">
-          <label>割振り</label>
-          <select id="i_wari">
-            <option value="">未分類</option>
-            <option value="A">A — 去年総会に参加した人</option>
-            <option value="B">B — 過去参加・ネパールミーティング視聴してる人</option>
-            <option value="C">C — 音信不通・行方不明・退転状態</option>
-          </select>
-        </div>
-        <div class="fld">
-          <label>班員氏名 *</label>
-          <input type="text" id="i_name" placeholder="氏名を入力">
-        </div>
-        <div class="fld">
-          <label>性別</label>
-          <select id="i_gender">
-            <option value="">未記入</option>
-            <option value="男">男</option>
-            <option value="女">女</option>
-          </select>
-        </div>
-        <div class="fld">
-          <label>勤務地住所（店舗名）</label>
-          <input type="text" id="i_work" placeholder="勤務先住所・店舗名">
-        </div>
-        <div class="fld">
-          <label>自宅住所</label>
-          <input type="text" id="i_home" placeholder="自宅住所">
-        </div>
-        <div class="fld">
-          <label>連絡先</label>
-          <input type="text" id="i_contact" placeholder="電話番号・LINEなど">
-        </div>
-      </div>
+      <div class="input-header">⚙️ Firebase 接続設定</div>
+      <div class="input-sub">データベースURLを変更できます</div>
+      <div class="fld" style="margin-bottom:12px"><label>Firebase Database URL</label><input type="url" id="cfg_url" placeholder="https://your-project-default-rtdb.firebaseio.com"></div>
       <div class="form-actions">
-        <button class="btn-clear" onclick="clearForm()">クリア</button>
-        <button class="btn-add" id="addBtn" onclick="addMember()">追加する</button>
+        <button class="btn-add" onclick="saveConfig()">再接続する</button>
       </div>
-    </div>
-  </div>
-
-  <!-- ====== SCHEDULE TAB ====== -->
-  <div id="tab-sched" style="display:none">
-    <div class="input-section">
-      <div class="input-header">予定を追加</div>
-      <div class="input-sub">訪問予定の情報を入力してください</div>
-      <div class="form-grid" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))">
-        <div class="fld" style="grid-column:1/-1">
-          <label>日付・時間 *</label>
-          <input type="text" id="s_date" placeholder="例：4月15日 14時〜">
-        </div>
-        <div class="fld">
-          <label>店名 *</label>
-          <input type="text" id="s_shop" placeholder="店名を入力">
-        </div>
-        <div class="fld">
-          <label>住所</label>
-          <input type="text" id="s_addr" placeholder="住所を入力">
-        </div>
-        <div class="fld" style="grid-column:1/-1">
-          <label>行く人（予定）</label>
-          <input type="text" id="s_people" placeholder="例：田中, 鈴木, 山田（カンマ区切り）">
-        </div>
-      </div>
-      <div class="form-actions">
-        <button class="btn-clear" onclick="clearSchedForm()">クリア</button>
-        <button class="btn-add" id="schedAddBtn" onclick="addSched()">追加する</button>
-      </div>
-    </div>
-
-    <div style="border-top:1px solid #f0e8de;padding-top:16px">
-      <div id="schedLoading" class="loading"><div class="spinner"></div><br>読み込み中…</div>
-      <div id="schedList"></div>
-      <div id="schedEmpty" class="empty" style="display:none">予定がまだありません</div>
     </div>
   </div>
 
 </div><!-- /content -->
+</div><!-- /mainApp -->
+
+<!-- Member Edit Modal -->
+<div class="overlay" id="editOverlay">
+  <div class="modal">
+    <div class="modal-title">✏️ メンバー情報を編集</div>
+    <div class="form-grid">
+      <div class="fld"><label>班名</label><input type="text" id="e_han"></div>
+      <div class="fld"><label>割振り</label>
+        <select id="e_wari"><option value="">未分類</option><option value="A">A</option><option value="B">B</option><option value="C">C</option></select>
+      </div>
+      <div class="fld"><label>氏名</label><input type="text" id="e_name"></div>
+      <div class="fld"><label>性別</label>
+        <select id="e_gender"><option value="">未記入</option><option value="男">男</option><option value="女">女</option></select>
+      </div>
+      <div class="fld"><label>勤務地</label><input type="text" id="e_work"></div>
+      <div class="fld"><label>自宅住所</label><input type="text" id="e_home"></div>
+      <div class="fld"><label>連絡先</label><input type="text" id="e_contact"></div>
+    </div>
+    <div class="form-actions">
+      <button class="btn-clear" onclick="closeEdit()">キャンセル</button>
+      <button class="btn-add" onclick="saveEdit()">保存する</button>
+    </div>
+  </div>
+</div>
 
 <!-- Schedule Edit Modal -->
 <div class="overlay" id="schedEditOverlay">
@@ -315,129 +358,148 @@ tr:hover td{background:rgba(185,28,28,.02)}
     </div>
   </div>
 </div>
-<div class="overlay" id="editOverlay">
-  <div class="modal">
-    <div class="modal-title">✏️ メンバー情報を編集</div>
-    <div class="form-grid">
-      <div class="fld"><label>班名</label><input type="text" id="e_han"></div>
-      <div class="fld"><label>割振り</label>
-        <select id="e_wari">
-          <option value="">未分類</option>
-          <option value="A">A — 去年総会に参加した人</option>
-          <option value="B">B — 過去参加・ネパールミーティング視聴してる人</option>
-          <option value="C">C — 音信不通・退転状態</option>
-        </select>
-      </div>
-      <div class="fld"><label>氏名</label><input type="text" id="e_name"></div>
-      <div class="fld"><label>性別</label>
-        <select id="e_gender"><option value="">未記入</option><option value="男">男</option><option value="女">女</option></select>
-      </div>
-      <div class="fld"><label>勤務地</label><input type="text" id="e_work"></div>
-      <div class="fld"><label>自宅住所</label><input type="text" id="e_home"></div>
-      <div class="fld"><label>連絡先</label><input type="text" id="e_contact"></div>
-    </div>
-    <div class="form-actions">
-      <button class="btn-clear" onclick="closeEdit()">キャンセル</button>
-      <button class="btn-add" onclick="saveEdit()">保存する</button>
-    </div>
-  </div>
-</div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-const STORAGE_KEY = 'nepal_roster_v1';
-let members = [];
+// ========================================
+// Firebase REST API (SDK不要・fetch のみ)
+// ========================================
+let DB_URL = localStorage.getItem('fb_url') || 'https://nepal-roster-default-rtdb.firebaseio.com';
+let members = [];   // {fbKey, han, wari, name, gender, work, home, contact}
+let scheds   = [];  // {fbKey, date, shop, addr, people[]}
 let filterHan = 'all';
 let filterWari = 'all';
-let editKey = null;
+let editKey = null;      // fbKey
+let schedEditKey = null; // fbKey
 
-// ---- Storage ----
-async function loadData() {
-  try {
-    const result = await window.storage.get(STORAGE_KEY, true);
-    members = result ? JSON.parse(result.value) : [];
-  } catch(e) {
-    members = [];
-  }
-  document.getElementById('loadMsg').style.display = 'none';
-  document.getElementById('mainTable').style.display = '';
-  buildHanFilters();
-  render();
+// ---- ステータス表示 ----
+function setLive(ok) {
+  document.getElementById('liveDot').className = 'live-dot' + (ok ? '' : ' off');
+  document.getElementById('liveStatus').textContent = ok ? 'リアルタイム同期中' : '未接続';
 }
 
-async function saveData() {
+// ---- 設定 ----
+function saveConfig() {
+  const url = (document.getElementById('fb_url') || document.getElementById('fbUrl')).value.trim().replace(/\/$/, '');
+  if (!url.startsWith('https://')) { toast('正しいURLを入力してください'); return; }
+  DB_URL = url;
+  localStorage.setItem('fb_url', DB_URL);
+  toast('接続設定を保存しました');
+  startApp();
+}
+
+// ---- Firebase REST helpers ----
+async function fbGet(path) {
+  const r = await fetch(`${DB_URL}/${path}.json`);
+  if (!r.ok) throw new Error('GET failed');
+  return r.json();
+}
+async function fbPost(path, data) {
+  const r = await fetch(`${DB_URL}/${path}.json`, {method:'POST', body:JSON.stringify(data)});
+  if (!r.ok) throw new Error('POST failed');
+  return r.json(); // {name: fbKey}
+}
+async function fbPut(path, data) {
+  const r = await fetch(`${DB_URL}/${path}.json`, {method:'PUT', body:JSON.stringify(data)});
+  if (!r.ok) throw new Error('PUT failed');
+  return r.json();
+}
+async function fbDelete(path) {
+  const r = await fetch(`${DB_URL}/${path}.json`, {method:'DELETE'});
+  if (!r.ok) throw new Error('DELETE failed');
+}
+
+// ---- ポーリング（3秒ごと） ----
+let pollTimer = null;
+function startPolling() {
+  if (pollTimer) clearInterval(pollTimer);
+  pollAll();
+  pollTimer = setInterval(pollAll, 3000);
+}
+async function pollAll() {
   try {
-    await window.storage.set(STORAGE_KEY, JSON.stringify(members), true);
+    const [mData, sData] = await Promise.all([fbGet('members'), fbGet('schedules')]);
+    members = mData ? Object.entries(mData).map(([k,v])=>({fbKey:k,...v})) : [];
+    scheds   = sData ? Object.entries(sData).map(([k,v])=>({fbKey:k,...v}))
+                           .sort((a,b)=> (b.createdAt||0)-(a.createdAt||0)) : [];
+    setLive(true);
+    buildHanFilters();
+    render();
+    renderSched();
+    document.getElementById('loadMsg').style.display = 'none';
+    document.getElementById('mainTable').style.display = '';
+    document.getElementById('schedLoading').style.display = 'none';
   } catch(e) {
-    toast('保存に失敗しました');
+    setLive(false);
   }
 }
 
-// ---- Tabs ----
+// ---- 起動 ----
+function startApp() {
+  if (!DB_URL) {
+    document.getElementById('setupScreen').style.display = '';
+    document.getElementById('mainApp').style.display = 'none';
+    return;
+  }
+  document.getElementById('setupScreen').style.display = 'none';
+  document.getElementById('mainApp').style.display = '';
+  const cfgInput = document.getElementById('cfg_url');
+  if (cfgInput) cfgInput.value = DB_URL;
+  startPolling();
+}
+
+// ---- タブ ----
 function showTab(name, btn) {
-  ['view','input','sched','url'].forEach(t => document.getElementById('tab-'+t).style.display = t===name?'':'none');
+  ['view','input','sched','url','cfg'].forEach(t => {
+    const el = document.getElementById('tab-'+t);
+    if(el) el.style.display = t===name ? '' : 'none';
+  });
   document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  if (name === 'view') render();
-  if (name === 'sched') renderSched();
 }
 
-function checkPw() {
-  const val = document.getElementById('pwInput').value;
-  if (val === 'hatanaka') {
-    document.getElementById('pwGate').style.display = 'none';
-    const fr = document.getElementById('urlFrame');
-    fr.src = 'https://myokanko.org/archives/808';
-    fr.style.display = 'block';
-  } else {
-    document.getElementById('pwErr').style.display = '';
-  }
-}
-
-// ---- Filters ----
+// ---- フィルタ ----
 function buildHanFilters() {
-  const hans = [...new Set(members.map(m => m.han).filter(Boolean))].sort();
+  const hans = [...new Set(members.map(m=>m.han).filter(Boolean))].sort();
   const wrap = document.getElementById('hanFilters');
-  wrap.innerHTML = `<button class="pill on" data-han="all" onclick="setHan('all',this)">全班</button>`;
+  const cur = filterHan;
+  wrap.innerHTML = `<button class="pill ${cur==='all'?'on':''}" data-han="all" onclick="setHan('all',this)">全班</button>`;
   hans.forEach(h => {
     const b = document.createElement('button');
-    b.className = 'pill';
+    b.className = 'pill' + (cur===h?' on':'');
     b.dataset.han = h;
     b.textContent = h;
     b.onclick = () => setHan(h, b);
     wrap.appendChild(b);
   });
 }
-
 function setHan(v, btn) {
   filterHan = v;
   document.querySelectorAll('[data-han]').forEach(b => b.classList.remove('on'));
   btn.classList.add('on');
   render();
 }
-
 function setWari(v, btn) {
   filterWari = v;
-  document.querySelectorAll('[data-w]').forEach(b => { b.className = 'pill'; });
+  document.querySelectorAll('[data-w]').forEach(b => b.className = 'pill');
   btn.classList.add('on');
-  if (v === 'A') btn.classList.add('on-A');
-  else if (v === 'B') btn.classList.add('on-B');
-  else if (v === 'C') btn.classList.add('on-C');
+  if(v==='A') btn.classList.add('on-A');
+  else if(v==='B') btn.classList.add('on-B');
+  else if(v==='C') btn.classList.add('on-C');
   render();
 }
 
-// ---- Render ----
+// ---- レンダリング ----
 function render() {
-  const q = (document.getElementById('searchQ').value || '').toLowerCase();
+  const q = (document.getElementById('searchQ').value||'').toLowerCase();
   const filtered = members.filter(m => {
-    const matchHan = filterHan === 'all' || m.han === filterHan;
-    const matchWari = filterWari === 'all' || m.wari === filterWari;
-    const matchQ = !q || [m.han,m.name,m.work,m.home,m.contact].some(v => v && v.toLowerCase().includes(q));
-    return matchHan && matchWari && matchQ;
+    const mh = filterHan==='all' || m.han===filterHan;
+    const mw = filterWari==='all' || m.wari===filterWari;
+    const mq = !q || [m.han,m.name,m.work,m.home,m.contact].some(v=>v&&v.toLowerCase().includes(q));
+    return mh&&mw&&mq;
   });
 
-  // Stats (always over all members)
   document.getElementById('sTotal').textContent = members.length;
   document.getElementById('sA').textContent = members.filter(m=>m.wari==='A').length;
   document.getElementById('sB').textContent = members.filter(m=>m.wari==='B').length;
@@ -451,18 +513,15 @@ function render() {
     tbody.innerHTML = '';
     cardList.innerHTML = '';
     empty.style.display = '';
-  } else {
-    empty.style.display = 'none';
-    const rows = filtered.map(m => {
-      const realIdx = members.indexOf(m);
-      const bc = {A:'ba',B:'bb',C:'bc'}[m.wari] || 'bx';
-      const gc = {男:'gm',女:'gf'}[m.gender] || '';
-      return {m, realIdx, bc, gc};
-    });
+    return;
+  }
+  empty.style.display = 'none';
 
-    // Desktop table rows
-    tbody.innerHTML = rows.map(({m,realIdx,bc,gc}) => `<tr>
-      <td style="color:#bbb;font-size:11px">${realIdx+1}</td>
+  tbody.innerHTML = filtered.map((m,i) => {
+    const bc = {A:'ba',B:'bb',C:'bc'}[m.wari]||'bx';
+    const gc = {男:'gm',女:'gf'}[m.gender]||'';
+    return `<tr>
+      <td style="color:#bbb;font-size:11px">${i+1}</td>
       <td style="font-size:12px;color:#9b8878">${esc(m.han||'—')}</td>
       <td><span class="badge ${bc}">${m.wari||'—'}</span></td>
       <td class="c-name">${esc(m.name||'—')}</td>
@@ -471,13 +530,16 @@ function render() {
       <td style="font-size:12px">${esc(m.home||'—')}</td>
       <td style="font-size:12px">${esc(m.contact||'—')}</td>
       <td style="white-space:nowrap">
-        <button class="act-btn" onclick="openEdit(${realIdx})">編集</button>
-        <button class="del-btn" onclick="del(${realIdx})">削除</button>
+        <button class="act-btn" onclick="openEdit('${m.fbKey}')">編集</button>
+        <button class="del-btn" onclick="delMember('${m.fbKey}','${esc(m.name||'')}')">削除</button>
       </td>
-    </tr>`).join('');
+    </tr>`;
+  }).join('');
 
-    // Mobile cards
-    cardList.innerHTML = rows.map(({m,realIdx,bc,gc}) => `<div class="card">
+  cardList.innerHTML = filtered.map(m => {
+    const bc = {A:'ba',B:'bb',C:'bc'}[m.wari]||'bx';
+    const gc = {男:'gm',女:'gf'}[m.gender]||'';
+    return `<div class="card">
       <div class="card-top">
         <span class="badge ${bc}" style="width:28px;height:28px;font-size:13px">${m.wari||'—'}</span>
         <span class="card-name">${esc(m.name||'—')}</span>
@@ -488,55 +550,51 @@ function render() {
       ${m.home?`<div class="card-row"><span class="card-lbl">自宅住所</span><span class="card-val">${esc(m.home)}</span></div>`:''}
       ${m.contact?`<div class="card-row"><span class="card-lbl">連絡先</span><span class="card-val">${esc(m.contact)}</span></div>`:''}
       <div class="card-actions">
-        <button class="card-edit" onclick="openEdit(${realIdx})">編集</button>
-        <button class="card-del" onclick="del(${realIdx})">削除</button>
+        <button class="card-edit" onclick="openEdit('${m.fbKey}')">編集</button>
+        <button class="card-del" onclick="delMember('${m.fbKey}','${esc(m.name||'')}')">削除</button>
       </div>
-    </div>`).join('');
-  }
+    </div>`;
+  }).join('');
 }
 
-function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/'/g,'&#39;') }
 
-// ---- Add ----
+// ---- メンバー追加 ----
 async function addMember() {
-  const han = document.getElementById('i_han').value.trim();
+  const han  = document.getElementById('i_han').value.trim();
   const name = document.getElementById('i_name').value.trim();
-  if (!han) { toast('班名を入力してください'); document.getElementById('i_han').focus(); return; }
+  if (!han)  { toast('班名を入力してください');  document.getElementById('i_han').focus(); return; }
   if (!name) { toast('氏名を入力してください'); document.getElementById('i_name').focus(); return; }
-
   const btn = document.getElementById('addBtn');
   btn.disabled = true; btn.textContent = '保存中…';
-
-  members.push({
-    han,
-    wari: document.getElementById('i_wari').value,
-    name,
-    gender: document.getElementById('i_gender').value,
-    work: document.getElementById('i_work').value.trim(),
-    home: document.getElementById('i_home').value.trim(),
-    contact: document.getElementById('i_contact').value.trim(),
-    addedAt: Date.now()
-  });
-
-  await saveData();
-  buildHanFilters();
-  render();
-  clearForm();
+  try {
+    await fbPost('members', {
+      han, wari: document.getElementById('i_wari').value, name,
+      gender: document.getElementById('i_gender').value,
+      work: document.getElementById('i_work').value.trim(),
+      home: document.getElementById('i_home').value.trim(),
+      contact: document.getElementById('i_contact').value.trim(),
+      createdAt: Date.now()
+    });
+    clearForm();
+    toast(`「${name}」を追加しました ✓`);
+    await pollAll();
+  } catch(e) { toast('保存に失敗しました'); }
   btn.disabled = false; btn.textContent = '追加する';
-  toast(`「${name}」を追加しました ✓`);
 }
 
 function clearForm() {
   ['i_han','i_wari','i_name','i_gender','i_work','i_home','i_contact'].forEach(id => {
     const el = document.getElementById(id);
-    if (el.tagName==='SELECT') el.selectedIndex=0; else el.value='';
+    if(el.tagName==='SELECT') el.selectedIndex=0; else el.value='';
   });
 }
 
-// ---- Edit ----
-function openEdit(idx) {
-  editKey = idx;
-  const m = members[idx];
+// ---- メンバー編集 ----
+function openEdit(fbKey) {
+  editKey = fbKey;
+  const m = members.find(m=>m.fbKey===fbKey);
+  if(!m) return;
   document.getElementById('e_han').value = m.han||'';
   document.getElementById('e_wari').value = m.wari||'';
   document.getElementById('e_name').value = m.name||'';
@@ -546,40 +604,118 @@ function openEdit(idx) {
   document.getElementById('e_contact').value = m.contact||'';
   document.getElementById('editOverlay').classList.add('open');
 }
-
-function closeEdit() {
-  document.getElementById('editOverlay').classList.remove('open');
-  editKey = null;
-}
-
+function closeEdit() { document.getElementById('editOverlay').classList.remove('open'); editKey=null; }
 async function saveEdit() {
-  if (editKey===null) return;
-  members[editKey] = {
-    ...members[editKey],
-    han: document.getElementById('e_han').value.trim(),
-    wari: document.getElementById('e_wari').value,
-    name: document.getElementById('e_name').value.trim(),
-    gender: document.getElementById('e_gender').value,
-    work: document.getElementById('e_work').value.trim(),
-    home: document.getElementById('e_home').value.trim(),
-    contact: document.getElementById('e_contact').value.trim(),
-  };
-  await saveData();
-  buildHanFilters();
-  render();
-  closeEdit();
-  toast('更新しました ✓');
+  if(!editKey) return;
+  try {
+    await fbPut(`members/${editKey}`, {
+      han: document.getElementById('e_han').value.trim(),
+      wari: document.getElementById('e_wari').value,
+      name: document.getElementById('e_name').value.trim(),
+      gender: document.getElementById('e_gender').value,
+      work: document.getElementById('e_work').value.trim(),
+      home: document.getElementById('e_home').value.trim(),
+      contact: document.getElementById('e_contact').value.trim(),
+      updatedAt: Date.now()
+    });
+    closeEdit(); toast('更新しました ✓'); await pollAll();
+  } catch(e) { toast('更新に失敗しました'); }
 }
 
-// ---- Delete ----
-async function del(idx) {
-  if (!confirm(`「${members[idx].name}」を削除しますか？`)) return;
-  const name = members[idx].name;
-  members.splice(idx,1);
-  await saveData();
-  buildHanFilters();
-  render();
-  toast(`「${name}」を削除しました`);
+// ---- メンバー削除 ----
+async function delMember(fbKey, name) {
+  if(!confirm(`「${name}」を削除しますか？`)) return;
+  try { await fbDelete(`members/${fbKey}`); toast(`「${name}」を削除しました`); await pollAll(); }
+  catch(e) { toast('削除に失敗しました'); }
+}
+
+// ---- 予定追加 ----
+async function addSched() {
+  const date = document.getElementById('s_date').value.trim();
+  const shop = document.getElementById('s_shop').value.trim();
+  if(!date) { toast('日付・時間を入力してください'); document.getElementById('s_date').focus(); return; }
+  if(!shop) { toast('店名を入力してください'); document.getElementById('s_shop').focus(); return; }
+  const pr = document.getElementById('s_people').value.trim();
+  const people = pr ? pr.split(/[,，、]/).map(s=>s.trim()).filter(Boolean) : [];
+  const btn = document.getElementById('schedAddBtn');
+  btn.disabled=true; btn.textContent='保存中…';
+  try {
+    await fbPost('schedules', { date, shop, addr: document.getElementById('s_addr').value.trim(), people, createdAt: Date.now() });
+    clearSchedForm(); toast(`「${shop}」の予定を追加しました ✓`); await pollAll();
+  } catch(e) { toast('保存に失敗しました'); }
+  btn.disabled=false; btn.textContent='追加する';
+}
+
+function clearSchedForm() {
+  ['s_date','s_shop','s_addr','s_people'].forEach(id => document.getElementById(id).value='');
+}
+
+function renderSched() {
+  const list = document.getElementById('schedList');
+  const empty = document.getElementById('schedEmpty');
+  if(!scheds.length) { list.innerHTML=''; empty.style.display=''; return; }
+  empty.style.display='none';
+  list.innerHTML = scheds.map(s => `
+    <div class="sched-card">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px">
+        <div>
+          <div class="sched-date">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            ${esc(s.date)}
+          </div>
+          <div class="sched-shop">${esc(s.shop)}</div>
+        </div>
+        <div style="display:flex;gap:5px;flex-shrink:0">
+          <button class="act-btn" onclick="openSchedEdit('${s.fbKey}')">編集</button>
+          <button class="del-btn" onclick="delSched('${s.fbKey}','${esc(s.shop)}')">削除</button>
+        </div>
+      </div>
+      ${s.addr?`<div class="sched-addr"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${esc(s.addr)}</div>`:''}
+      ${s.people&&s.people.length?`<div class="sched-people-label">行く人（予定）</div><div class="sched-people">${s.people.map(p=>`<span class="person-tag">${esc(p)}</span>`).join('')}</div>`:''}
+    </div>`).join('');
+}
+
+function openSchedEdit(fbKey) {
+  schedEditKey = fbKey;
+  const s = scheds.find(s=>s.fbKey===fbKey);
+  if(!s) return;
+  document.getElementById('se_date').value = s.date||'';
+  document.getElementById('se_shop').value = s.shop||'';
+  document.getElementById('se_addr').value = s.addr||'';
+  document.getElementById('se_people').value = (s.people||[]).join(', ');
+  document.getElementById('schedEditOverlay').classList.add('open');
+}
+function closeSchedEdit() { document.getElementById('schedEditOverlay').classList.remove('open'); schedEditKey=null; }
+async function saveSchedEdit() {
+  if(!schedEditKey) return;
+  const pr = document.getElementById('se_people').value.trim();
+  try {
+    await fbPut(`schedules/${schedEditKey}`, {
+      date: document.getElementById('se_date').value.trim(),
+      shop: document.getElementById('se_shop').value.trim(),
+      addr: document.getElementById('se_addr').value.trim(),
+      people: pr ? pr.split(/[,，、]/).map(s=>s.trim()).filter(Boolean) : [],
+      updatedAt: Date.now()
+    });
+    closeSchedEdit(); toast('予定を更新しました ✓'); await pollAll();
+  } catch(e) { toast('更新に失敗しました'); }
+}
+async function delSched(fbKey, shop) {
+  if(!confirm(`「${shop}」の予定を削除しますか？`)) return;
+  try { await fbDelete(`schedules/${fbKey}`); toast('予定を削除しました'); await pollAll(); }
+  catch(e) { toast('削除に失敗しました'); }
+}
+
+// ---- パスワード ----
+function checkPw() {
+  if(document.getElementById('pwInput').value === 'hatanaka') {
+    document.getElementById('pwGate').style.display='none';
+    const fr = document.getElementById('urlFrame');
+    fr.src='https://myokanko.org/archives/808';
+    fr.style.display='block';
+  } else {
+    document.getElementById('pwErr').style.display='';
+  }
 }
 
 // ---- Toast ----
@@ -590,122 +726,11 @@ function toast(msg) {
   setTimeout(()=>el.classList.remove('show'), 2800);
 }
 
-// Close overlay on bg click
+// Overlay close
 document.getElementById('editOverlay').addEventListener('click', function(e){ if(e.target===this) closeEdit(); });
 document.getElementById('schedEditOverlay').addEventListener('click', function(e){ if(e.target===this) closeSchedEdit(); });
 
-// ======== SCHEDULE ========
-const SCHED_KEY = 'nepal_sched_v1';
-let scheds = [];
-let schedEditKey = null;
-
-async function loadSched() {
-  try {
-    const r = await window.storage.get(SCHED_KEY, true);
-    scheds = r ? JSON.parse(r.value) : [];
-  } catch(e) { scheds = []; }
-  document.getElementById('schedLoading').style.display = 'none';
-  renderSched();
-}
-
-async function saveSched() {
-  try { await window.storage.set(SCHED_KEY, JSON.stringify(scheds), true); }
-  catch(e) { toast('保存に失敗しました'); }
-}
-
-async function addSched() {
-  const date = document.getElementById('s_date').value.trim();
-  const shop = document.getElementById('s_shop').value.trim();
-  if (!date) { toast('日付・時間を入力してください'); document.getElementById('s_date').focus(); return; }
-  if (!shop) { toast('店名を入力してください'); document.getElementById('s_shop').focus(); return; }
-  const peopleRaw = document.getElementById('s_people').value.trim();
-  const people = peopleRaw ? peopleRaw.split(/[,，、]/).map(s=>s.trim()).filter(Boolean) : [];
-  const btn = document.getElementById('schedAddBtn');
-  btn.disabled = true; btn.textContent = '保存中…';
-  scheds.unshift({ id: Date.now(), date, shop, addr: document.getElementById('s_addr').value.trim(), people });
-  await saveSched();
-  renderSched();
-  clearSchedForm();
-  btn.disabled = false; btn.textContent = '追加する';
-  toast(`「${shop}」の予定を追加しました ✓`);
-}
-
-function clearSchedForm() {
-  ['s_date','s_shop','s_addr','s_people'].forEach(id => document.getElementById(id).value = '');
-}
-
-function renderSched() {
-  const list = document.getElementById('schedList');
-  const empty = document.getElementById('schedEmpty');
-  if (!scheds.length) { list.innerHTML=''; empty.style.display=''; return; }
-  empty.style.display = 'none';
-  list.innerHTML = scheds.map((s,i) => `
-    <div style="border:1.5px solid #ede8e0;border-radius:12px;padding:16px;margin-bottom:10px;background:#fafaf8">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px">
-        <div>
-          <div style="font-size:13px;font-weight:700;color:#b91c1c;margin-bottom:3px">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:-1px;margin-right:4px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${esc(s.date)}
-          </div>
-          <div style="font-size:16px;font-weight:900;color:#1a1410">${esc(s.shop)}</div>
-        </div>
-        <div style="display:flex;gap:5px;flex-shrink:0">
-          <button class="act-btn" onclick="openSchedEdit(${i})">編集</button>
-          <button class="del-btn" onclick="delSched(${i})">削除</button>
-        </div>
-      </div>
-      ${s.addr ? `<div style="font-size:12px;color:#7a6a5a;margin-bottom:8px;display:flex;align-items:center;gap:5px">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${esc(s.addr)}</div>` : ''}
-      ${s.people && s.people.length ? `
-        <div style="margin-top:4px">
-          <div style="font-size:10px;font-weight:700;color:#b0a090;letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px">行く人（予定）</div>
-          <div style="display:flex;flex-wrap:wrap;gap:5px">
-            ${s.people.map(p=>`<span style="background:#fff3f0;color:#b91c1c;border:1.5px solid #fca5a5;border-radius:20px;padding:3px 10px;font-size:12px;font-weight:700">${esc(p)}</span>`).join('')}
-          </div>
-        </div>` : ''}
-    </div>`).join('');
-}
-
-function openSchedEdit(i) {
-  schedEditKey = i;
-  const s = scheds[i];
-  document.getElementById('se_date').value = s.date||'';
-  document.getElementById('se_shop').value = s.shop||'';
-  document.getElementById('se_addr').value = s.addr||'';
-  document.getElementById('se_people').value = (s.people||[]).join(', ');
-  document.getElementById('schedEditOverlay').classList.add('open');
-}
-
-function closeSchedEdit() {
-  document.getElementById('schedEditOverlay').classList.remove('open');
-  schedEditKey = null;
-}
-
-async function saveSchedEdit() {
-  if (schedEditKey===null) return;
-  const peopleRaw = document.getElementById('se_people').value.trim();
-  scheds[schedEditKey] = {
-    ...scheds[schedEditKey],
-    date: document.getElementById('se_date').value.trim(),
-    shop: document.getElementById('se_shop').value.trim(),
-    addr: document.getElementById('se_addr').value.trim(),
-    people: peopleRaw ? peopleRaw.split(/[,，、]/).map(s=>s.trim()).filter(Boolean) : [],
-  };
-  await saveSched();
-  renderSched();
-  closeSchedEdit();
-  toast('予定を更新しました ✓');
-}
-
-async function delSched(i) {
-  if (!confirm(`「${scheds[i].shop}」の予定を削除しますか？`)) return;
-  scheds.splice(i,1);
-  await saveSched();
-  renderSched();
-  toast('予定を削除しました');
-}
-
-loadData();
-loadSched();
+startApp();
 </script>
 </body>
 </html>
