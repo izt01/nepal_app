@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ネパール人総会 結集名簿</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans JP',sans-serif;background:#f5f3ef;color:#1a1410;min-height:100vh}
+
+/* Header */
+.hdr{background:#b91c1c;color:#fff;padding:14px 20px;position:sticky;top:0;z-index:50;box-shadow:0 2px 12px rgba(185,28,28,.35)}
+.hdr-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.hdr-title{font-size:clamp(14px,3vw,20px);font-weight:900;letter-spacing:.06em}
+.hdr-sub{font-size:11px;opacity:.75;letter-spacing:.1em;margin-top:2px}
+.hdr-stats{display:flex;gap:10px;flex-wrap:wrap}
+.stat{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:5px 12px;font-size:12px;font-weight:500;white-space:nowrap}
+.stat b{font-size:16px;font-weight:900}
+
+/* Tabs */
+.tabs{max-width:1100px;margin:0 auto;padding:16px 20px 0;display:flex;gap:8px}
+.tab{padding:9px 20px;border-radius:10px 10px 0 0;border:1.5px solid #ddd;border-bottom:none;background:#ede9e2;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;color:#8a7a6a;transition:all .15s}
+.tab.active{background:#fff;color:#b91c1c;border-color:#ddd}
+
+/* Content */
+.content{max-width:1100px;margin:0 auto;padding:0 20px 40px;background:#fff;border:1.5px solid #ddd;border-radius:0 12px 12px 12px}
+
+/* ---- VIEW TAB ---- */
+.view-controls{padding:16px 0 12px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;border-bottom:1px solid #f0e8de}
+.search-box{position:relative;flex:1;min-width:180px}
+.search-box svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#aaa;pointer-events:none}
+.search-box input{width:100%;padding:8px 12px 8px 34px;border:1.5px solid #e0d8ce;border-radius:8px;font-family:inherit;font-size:13px;outline:none;background:#fafafa;transition:border-color .2s}
+.search-box input:focus{border-color:#b91c1c;background:#fff}
+
+.pill-group{display:flex;gap:5px;flex-wrap:wrap}
+.pill{padding:6px 12px;border-radius:20px;border:1.5px solid #ddd;background:#fff;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;color:#7a6a5a}
+.pill:hover{border-color:#b91c1c;color:#b91c1c}
+.pill.on{background:#b91c1c;border-color:#b91c1c;color:#fff}
+.pill.on-A{background:#16a34a;border-color:#16a34a;color:#fff}
+.pill.on-B{background:#1d6fae;border-color:#1d6fae;color:#fff}
+.pill.on-C{background:#6b7280;border-color:#6b7280;color:#fff}
+
+/* Table */
+.tbl-wrap{overflow-x:auto;margin-top:4px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead tr{background:#faf5ee}
+th{padding:10px 12px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#9b8878;border-bottom:2px solid #e8ddd0;white-space:nowrap}
+td{padding:10px 12px;border-bottom:1px solid #f5ede5;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(185,28,28,.02)}
+
+.badge{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:6px;font-weight:900;font-size:13px;color:#fff}
+.ba{background:#16a34a}.bb{background:#1d6fae}.bc{background:#6b7280}.bx{background:#ddd;color:#9b8878}
+
+.gtag{font-size:11px;padding:2px 8px;border-radius:20px;font-weight:700;border:1.5px solid}
+.gm{color:#1d6fae;border-color:#1d6fae;background:#ebf5fb}
+.gf{color:#b91c1c;border-color:#b91c1c;background:#fdecea}
+
+.act-btn{padding:3px 9px;border:1.5px solid #ddd;border-radius:6px;background:#fff;font-family:inherit;font-size:12px;cursor:pointer;color:#7a6a5a;transition:all .15s}
+.act-btn:hover{border-color:#b91c1c;color:#b91c1c}
+.del-btn{padding:3px 9px;border:1.5px solid transparent;border-radius:6px;background:#fff;font-family:inherit;font-size:12px;cursor:pointer;color:#bbb;transition:all .15s;margin-left:3px}
+.del-btn:hover{border-color:#e74c3c;color:#e74c3c}
+
+.empty{padding:48px 20px;text-align:center;color:#bbb;font-size:14px}
+
+/* Legend */
+.legend{display:flex;gap:16px;flex-wrap:wrap;padding:12px 0 0;font-size:12px;color:#9b8878}
+.li{display:flex;align-items:center;gap:6px}
+.ldot{width:9px;height:9px;border-radius:3px}
+
+/* ---- INPUT TAB ---- */
+.input-section{padding:20px 0}
+.input-header{font-size:15px;font-weight:700;margin-bottom:4px;color:#1a1410}
+.input-sub{font-size:12px;color:#9b8878;margin-bottom:18px}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:16px}
+.fld label{display:block;font-size:11px;font-weight:700;color:#9b8878;margin-bottom:4px;letter-spacing:.05em;text-transform:uppercase}
+.fld input,.fld select{width:100%;padding:8px 11px;border:1.5px solid #e0d8ce;border-radius:8px;font-family:inherit;font-size:13px;background:#fafafa;outline:none;transition:border-color .2s;color:#1a1410}
+.fld input:focus,.fld select:focus{border-color:#b91c1c;background:#fff}
+.form-actions{display:flex;gap:8px;justify-content:flex-end;padding-top:4px}
+.btn-add{padding:9px 22px;background:#b91c1c;color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:background .15s}
+.btn-add:hover{background:#991b1b}
+.btn-add:disabled{background:#ddd;cursor:not-allowed}
+.btn-clear{padding:9px 16px;background:#fff;color:#7a6a5a;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:13px;cursor:pointer;transition:all .15s}
+.btn-clear:hover{border-color:#7a6a5a}
+
+/* toast */
+.toast{position:fixed;bottom:24px;right:24px;background:#1a1410;color:#fff;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:500;z-index:999;opacity:0;transform:translateY(12px);transition:all .3s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+
+/* Modal */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center;padding:20px}
+.overlay.open{display:flex}
+.modal{background:#fff;border-radius:14px;padding:22px;width:100%;max-width:540px;max-height:90vh;overflow-y:auto}
+.modal-title{font-size:15px;font-weight:700;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid #f0e8de}
+
+/* loading */
+.loading{padding:40px;text-align:center;color:#bbb;font-size:14px}
+.spinner{display:inline-block;width:24px;height:24px;border:2.5px solid #ddd;border-top-color:#b91c1c;border-radius:50%;animation:spin .7s linear infinite;margin-bottom:8px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:600px){
+  th:nth-child(6),td:nth-child(6),th:nth-child(7),td:nth-child(7){display:none}
+  .hdr-stats{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-inner">
+    <div>
+      <div class="hdr-title">🇳🇵 ネパール人総会 結集名簿</div>
+      <div class="hdr-sub">NEPAL ASSEMBLY MEMBER ROSTER</div>
+    </div>
+    <div class="hdr-stats">
+      <div class="stat">合計 <b id="sTotal">—</b> 名</div>
+      <div class="stat">A: <b id="sA">—</b> ／ B: <b id="sB">—</b> ／ C: <b id="sC">—</b></div>
+    </div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('view',this)">📋 名簿一覧</button>
+  <button class="tab" onclick="showTab('input',this)">✏️ データ入力</button>
+</div>
+
+<div class="content">
+
+  <!-- ====== VIEW TAB ====== -->
+  <div id="tab-view">
+    <div class="view-controls">
+      <div class="search-box">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="search" id="searchQ" placeholder="氏名・住所・連絡先で検索…" oninput="render()">
+      </div>
+      <div class="pill-group" id="hanFilters"></div>
+      <div class="pill-group">
+        <button class="pill on" data-w="all" onclick="setWari('all',this)">すべて</button>
+        <button class="pill" data-w="A" onclick="setWari('A',this)">A</button>
+        <button class="pill" data-w="B" onclick="setWari('B',this)">B</button>
+        <button class="pill" data-w="C" onclick="setWari('C',this)">C</button>
+        <button class="pill" data-w="" onclick="setWari('',this)">未分類</button>
+      </div>
+    </div>
+
+    <div class="legend">
+      <div class="li"><div class="ldot" style="background:#16a34a"></div>A：去年総会に参加した人</div>
+      <div class="li"><div class="ldot" style="background:#1d6fae"></div>B：過去参加・ネパールミーティング視聴してる人</div>
+      <div class="li"><div class="ldot" style="background:#6b7280"></div>C：音信不通・行方不明・退転状態</div>
+    </div>
+
+    <div class="tbl-wrap">
+      <div class="loading" id="loadMsg"><div class="spinner"></div><br>読み込み中…</div>
+      <table id="mainTable" style="display:none">
+        <thead>
+          <tr>
+            <th>#</th><th>班名</th><th>割振り</th><th>氏名</th><th>性別</th>
+            <th>勤務地（店舗名）</th><th>自宅住所</th><th>連絡先</th><th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+      <div class="empty" id="emptyMsg" style="display:none">該当するメンバーがいません</div>
+    </div>
+  </div>
+
+  <!-- ====== INPUT TAB ====== -->
+  <div id="tab-input" style="display:none">
+    <div class="input-section">
+      <div class="input-header">メンバー情報を入力</div>
+      <div class="input-sub">ご自身の班のメンバー情報を入力して「追加する」を押してください</div>
+      <div class="form-grid">
+        <div class="fld">
+          <label>班名 *</label>
+          <input type="text" id="i_han" placeholder="例：第1班・東京班">
+        </div>
+        <div class="fld">
+          <label>割振り</label>
+          <select id="i_wari">
+            <option value="">未分類</option>
+            <option value="A">A — 去年総会に参加した人</option>
+            <option value="B">B — 過去参加・ネパールミーティング視聴してる人</option>
+            <option value="C">C — 音信不通・行方不明・退転状態</option>
+          </select>
+        </div>
+        <div class="fld">
+          <label>班員氏名 *</label>
+          <input type="text" id="i_name" placeholder="氏名を入力">
+        </div>
+        <div class="fld">
+          <label>性別</label>
+          <select id="i_gender">
+            <option value="">未記入</option>
+            <option value="男">男</option>
+            <option value="女">女</option>
+          </select>
+        </div>
+        <div class="fld">
+          <label>勤務地住所（店舗名）</label>
+          <input type="text" id="i_work" placeholder="勤務先住所・店舗名">
+        </div>
+        <div class="fld">
+          <label>自宅住所</label>
+          <input type="text" id="i_home" placeholder="自宅住所">
+        </div>
+        <div class="fld">
+          <label>連絡先</label>
+          <input type="text" id="i_contact" placeholder="電話番号・LINEなど">
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-clear" onclick="clearForm()">クリア</button>
+        <button class="btn-add" id="addBtn" onclick="addMember()">追加する</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Edit Modal -->
+<div class="overlay" id="editOverlay">
+  <div class="modal">
+    <div class="modal-title">✏️ メンバー情報を編集</div>
+    <div class="form-grid">
+      <div class="fld"><label>班名</label><input type="text" id="e_han"></div>
+      <div class="fld"><label>割振り</label>
+        <select id="e_wari">
+          <option value="">未分類</option>
+          <option value="A">A — 去年総会に参加した人</option>
+          <option value="B">B — 過去参加・ネパールミーティング視聴してる人</option>
+          <option value="C">C — 音信不通・退転状態</option>
+        </select>
+      </div>
+      <div class="fld"><label>氏名</label><input type="text" id="e_name"></div>
+      <div class="fld"><label>性別</label>
+        <select id="e_gender"><option value="">未記入</option><option value="男">男</option><option value="女">女</option></select>
+      </div>
+      <div class="fld"><label>勤務地</label><input type="text" id="e_work"></div>
+      <div class="fld"><label>自宅住所</label><input type="text" id="e_home"></div>
+      <div class="fld"><label>連絡先</label><input type="text" id="e_contact"></div>
+    </div>
+    <div class="form-actions">
+      <button class="btn-clear" onclick="closeEdit()">キャンセル</button>
+      <button class="btn-add" onclick="saveEdit()">保存する</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const STORAGE_KEY = 'nepal_roster_v1';
+let members = [];
+let filterHan = 'all';
+let filterWari = 'all';
+let editKey = null;
+
+// ---- Storage ----
+async function loadData() {
+  try {
+    const result = await window.storage.get(STORAGE_KEY, true);
+    members = result ? JSON.parse(result.value) : [];
+  } catch(e) {
+    members = [];
+  }
+  document.getElementById('loadMsg').style.display = 'none';
+  document.getElementById('mainTable').style.display = '';
+  buildHanFilters();
+  render();
+}
+
+async function saveData() {
+  try {
+    await window.storage.set(STORAGE_KEY, JSON.stringify(members), true);
+  } catch(e) {
+    toast('保存に失敗しました');
+  }
+}
+
+// ---- Tabs ----
+function showTab(name, btn) {
+  ['view','input'].forEach(t => document.getElementById('tab-'+t).style.display = t===name?'':'none');
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (name === 'view') render();
+}
+
+// ---- Filters ----
+function buildHanFilters() {
+  const hans = [...new Set(members.map(m => m.han).filter(Boolean))].sort();
+  const wrap = document.getElementById('hanFilters');
+  wrap.innerHTML = `<button class="pill on" data-han="all" onclick="setHan('all',this)">全班</button>`;
+  hans.forEach(h => {
+    const b = document.createElement('button');
+    b.className = 'pill';
+    b.dataset.han = h;
+    b.textContent = h;
+    b.onclick = () => setHan(h, b);
+    wrap.appendChild(b);
+  });
+}
+
+function setHan(v, btn) {
+  filterHan = v;
+  document.querySelectorAll('[data-han]').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  render();
+}
+
+function setWari(v, btn) {
+  filterWari = v;
+  document.querySelectorAll('[data-w]').forEach(b => { b.className = 'pill'; });
+  btn.classList.add('on');
+  if (v === 'A') btn.classList.add('on-A');
+  else if (v === 'B') btn.classList.add('on-B');
+  else if (v === 'C') btn.classList.add('on-C');
+  render();
+}
+
+// ---- Render ----
+function render() {
+  const q = (document.getElementById('searchQ').value || '').toLowerCase();
+  const filtered = members.filter(m => {
+    const matchHan = filterHan === 'all' || m.han === filterHan;
+    const matchWari = filterWari === 'all' || m.wari === filterWari;
+    const matchQ = !q || [m.han,m.name,m.work,m.home,m.contact].some(v => v && v.toLowerCase().includes(q));
+    return matchHan && matchWari && matchQ;
+  });
+
+  // Stats (always over all members)
+  document.getElementById('sTotal').textContent = members.length;
+  document.getElementById('sA').textContent = members.filter(m=>m.wari==='A').length;
+  document.getElementById('sB').textContent = members.filter(m=>m.wari==='B').length;
+  document.getElementById('sC').textContent = members.filter(m=>m.wari==='C').length;
+
+  const tbody = document.getElementById('tbody');
+  const empty = document.getElementById('emptyMsg');
+
+  if (!filtered.length) {
+    tbody.innerHTML = '';
+    empty.style.display = '';
+  } else {
+    empty.style.display = 'none';
+    tbody.innerHTML = filtered.map(m => {
+      const realIdx = members.indexOf(m);
+      const bc = {A:'ba',B:'bb',C:'bc'}[m.wari] || 'bx';
+      const gc = {男:'gm',女:'gf'}[m.gender] || '';
+      return `<tr>
+        <td style="color:#bbb;font-size:11px">${realIdx+1}</td>
+        <td style="font-size:12px;color:#9b8878">${esc(m.han||'—')}</td>
+        <td><span class="badge ${bc}">${m.wari||'—'}</span></td>
+        <td style="font-weight:700">${esc(m.name||'—')}</td>
+        <td>${m.gender?`<span class="gtag ${gc}">${esc(m.gender)}</span>`:'<span style="color:#ccc;font-size:12px">—</span>'}</td>
+        <td style="font-size:12px">${esc(m.work||'—')}</td>
+        <td style="font-size:12px">${esc(m.home||'—')}</td>
+        <td style="font-size:12px">${esc(m.contact||'—')}</td>
+        <td style="white-space:nowrap">
+          <button class="act-btn" onclick="openEdit(${realIdx})">編集</button>
+          <button class="del-btn" onclick="del(${realIdx})">削除</button>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+}
+
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
+
+// ---- Add ----
+async function addMember() {
+  const han = document.getElementById('i_han').value.trim();
+  const name = document.getElementById('i_name').value.trim();
+  if (!han) { toast('班名を入力してください'); document.getElementById('i_han').focus(); return; }
+  if (!name) { toast('氏名を入力してください'); document.getElementById('i_name').focus(); return; }
+
+  const btn = document.getElementById('addBtn');
+  btn.disabled = true; btn.textContent = '保存中…';
+
+  members.push({
+    han,
+    wari: document.getElementById('i_wari').value,
+    name,
+    gender: document.getElementById('i_gender').value,
+    work: document.getElementById('i_work').value.trim(),
+    home: document.getElementById('i_home').value.trim(),
+    contact: document.getElementById('i_contact').value.trim(),
+    addedAt: Date.now()
+  });
+
+  await saveData();
+  buildHanFilters();
+  render();
+  clearForm();
+  btn.disabled = false; btn.textContent = '追加する';
+  toast(`「${name}」を追加しました ✓`);
+}
+
+function clearForm() {
+  ['i_han','i_wari','i_name','i_gender','i_work','i_home','i_contact'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el.tagName==='SELECT') el.selectedIndex=0; else el.value='';
+  });
+}
+
+// ---- Edit ----
+function openEdit(idx) {
+  editKey = idx;
+  const m = members[idx];
+  document.getElementById('e_han').value = m.han||'';
+  document.getElementById('e_wari').value = m.wari||'';
+  document.getElementById('e_name').value = m.name||'';
+  document.getElementById('e_gender').value = m.gender||'';
+  document.getElementById('e_work').value = m.work||'';
+  document.getElementById('e_home').value = m.home||'';
+  document.getElementById('e_contact').value = m.contact||'';
+  document.getElementById('editOverlay').classList.add('open');
+}
+
+function closeEdit() {
+  document.getElementById('editOverlay').classList.remove('open');
+  editKey = null;
+}
+
+async function saveEdit() {
+  if (editKey===null) return;
+  members[editKey] = {
+    ...members[editKey],
+    han: document.getElementById('e_han').value.trim(),
+    wari: document.getElementById('e_wari').value,
+    name: document.getElementById('e_name').value.trim(),
+    gender: document.getElementById('e_gender').value,
+    work: document.getElementById('e_work').value.trim(),
+    home: document.getElementById('e_home').value.trim(),
+    contact: document.getElementById('e_contact').value.trim(),
+  };
+  await saveData();
+  buildHanFilters();
+  render();
+  closeEdit();
+  toast('更新しました ✓');
+}
+
+// ---- Delete ----
+async function del(idx) {
+  if (!confirm(`「${members[idx].name}」を削除しますか？`)) return;
+  const name = members[idx].name;
+  members.splice(idx,1);
+  await saveData();
+  buildHanFilters();
+  render();
+  toast(`「${name}」を削除しました`);
+}
+
+// ---- Toast ----
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'), 2800);
+}
+
+// Close overlay on bg click
+document.getElementById('editOverlay').addEventListener('click', function(e){ if(e.target===this) closeEdit(); });
+
+loadData();
+</script>
+</body>
+</html>
