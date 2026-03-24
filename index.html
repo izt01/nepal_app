@@ -294,13 +294,30 @@ tr:hover td{background:rgba(185,28,28,.02)}
 
   <!-- 参考資料 -->
   <div id="tab-url" style="display:none">
-    <div class="pw-gate" id="pwGate">
-      <p>このページはパスワードで保護されています</p>
-      <input type="password" id="pwInput" placeholder="パスワードを入力" onkeydown="if(event.key==='Enter')checkPw()">
-      <button onclick="checkPw()">開く</button>
-      <p id="pwErr" style="color:#b91c1c;font-size:12px;margin-top:8px;display:none">パスワードが違います</p>
+    <div class="input-section">
+      <div class="input-header">🔗 参考資料</div>
+      <div class="input-sub">パスワードを入力してページを開いてください</div>
+      <div id="pwGate">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px">
+          <div class="fld" style="flex:1;min-width:160px;margin:0">
+            <input type="password" id="pwInput" placeholder="パスワードを入力" onkeydown="if(event.key==='Enter')checkPw()" style="width:100%;padding:10px 12px;border:1.5px solid #e0d8ce;border-radius:8px;font-family:inherit;font-size:14px;outline:none">
+          </div>
+          <button class="btn-add" onclick="checkPw()" style="white-space:nowrap">開く</button>
+        </div>
+        <p id="pwErr" style="color:#b91c1c;font-size:12px;display:none">パスワードが違います</p>
+      </div>
+      <div id="urlOpened" style="display:none">
+        <div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <div>
+            <div style="font-size:13px;font-weight:700;color:#166534;margin-bottom:3px">✅ 認証済み</div>
+            <div style="font-size:12px;color:#4b7a5a">ボタンを押してページを開いてください</div>
+          </div>
+          <button class="btn-add" onclick="window.open('https://myokanko.org/archives/808','_blank')" style="background:#16a34a;white-space:nowrap">
+            ページを開く →
+          </button>
+        </div>
+      </div>
     </div>
-    <iframe id="urlFrame" class="url-frame" style="display:none" src="" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
   </div>
 
   <!-- 設定 -->
@@ -710,9 +727,8 @@ async function delSched(fbKey, shop) {
 function checkPw() {
   if(document.getElementById('pwInput').value === 'hatanaka') {
     document.getElementById('pwGate').style.display='none';
-    const fr = document.getElementById('urlFrame');
-    fr.src='https://myokanko.org/archives/808';
-    fr.style.display='block';
+    document.getElementById('urlOpened').style.display='';
+    window.open('https://myokanko.org/archives/808','_blank');
   } else {
     document.getElementById('pwErr').style.display='';
   }
