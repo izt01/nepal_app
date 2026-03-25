@@ -50,11 +50,18 @@ table{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed}
 thead tr{background:#faf5ee}
 th{padding:10px 10px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#9b8878;border-bottom:2px solid #e8ddd0;white-space:nowrap;overflow:hidden}
 td{padding:10px 10px;border-bottom:1px solid #f5ede5;vertical-align:middle;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-col.c-no{width:36px}col.c-han{width:70px}col.c-w{width:44px}col.c-name{width:130px}
-col.c-g{width:44px}col.c-work{width:160px}col.c-home{width:160px}col.c-con{width:120px}col.c-op{width:90px}
+col.c-no{width:36px}col.c-han{width:70px}col.c-w{width:44px}col.c-name{width:120px}
+col.c-g{width:44px}col.c-work{width:140px}col.c-home{width:140px}col.c-con{width:110px}col.c-st{width:66px}col.c-op{width:90px}
 td.c-name{white-space:nowrap;font-weight:700;overflow:hidden;text-overflow:ellipsis}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:rgba(185,28,28,.02)}
+tr.row-moshi td{background:#fff5f5}
+tr.row-moshi:hover td{background:#ffe8e8}
+
+.stag{font-size:11px;padding:2px 7px;border-radius:20px;font-weight:700;border:1.5px solid;white-space:nowrap}
+.st-done{color:#991b1b;border-color:#fca5a5;background:#fee2e2}
+.st-kakutei{color:#166534;border-color:#86efac;background:#dcfce7}
+.st-miteи{color:#92400e;border-color:#fcd34d;background:#fef9c3}
 
 .badge{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;font-weight:900;font-size:12px;color:#fff}
 .ba{background:#16a34a}.bb{background:#1d6fae}.bc{background:#6b7280}.bx{background:#ddd;color:#9b8878}
@@ -201,7 +208,6 @@ tr:hover td{background:rgba(185,28,28,.02)}
   <button class="tab" onclick="showTab('input',this)">✏️ データ入力</button>
   <button class="tab" onclick="showTab('sched',this)">📅 予定</button>
   <button class="tab" onclick="showTab('url',this)">🔗 参考資料</button>
-  <button class="tab" onclick="showTab('cfg',this)" style="margin-left:auto">⚙️</button>
 </div>
 
 <div class="content">
@@ -221,6 +227,12 @@ tr:hover td{background:rgba(185,28,28,.02)}
         <button class="pill" data-w="C" onclick="setWari('C',this)">C</button>
         <button class="pill" data-w="" onclick="setWari('',this)">未分類</button>
       </div>
+      <div class="pill-group">
+        <button class="pill on" data-s="all" onclick="setStatus('all',this)">申込：全て</button>
+        <button class="pill" data-s="済み" onclick="setStatus('済み',this)">済み</button>
+        <button class="pill" data-s="確定" onclick="setStatus('確定',this)">確定</button>
+        <button class="pill" data-s="未定" onclick="setStatus('未定',this)">未定</button>
+      </div>
     </div>
     <div class="legend">
       <div class="li"><div class="ldot" style="background:#16a34a"></div>A：去年総会に参加した人</div>
@@ -230,8 +242,8 @@ tr:hover td{background:rgba(185,28,28,.02)}
     <div class="tbl-wrap">
       <div class="loading" id="loadMsg"><div class="spinner"></div><br>読み込み中…</div>
       <table id="mainTable" style="display:none">
-        <colgroup><col class="c-no"><col class="c-han"><col class="c-w"><col class="c-name"><col class="c-g"><col class="c-work"><col class="c-home"><col class="c-con"><col class="c-op"></colgroup>
-        <thead><tr><th>#</th><th>班名</th><th>割振り</th><th>氏名</th><th>性別</th><th>勤務地（店舗名）</th><th>自宅住所</th><th>連絡先</th><th>操作</th></tr></thead>
+        <colgroup><col class="c-no"><col class="c-han"><col class="c-w"><col class="c-name"><col class="c-g"><col class="c-work"><col class="c-home"><col class="c-con"><col class="c-st"><col class="c-op"></colgroup>
+        <thead><tr><th>#</th><th>班名</th><th>割振り</th><th>氏名</th><th>性別</th><th>勤務地（店舗名）</th><th>自宅住所</th><th>連絡先</th><th>申し込み</th><th>操作</th></tr></thead>
         <tbody id="tbody"></tbody>
       </table>
       <div class="card-list" id="cardList"></div>
@@ -261,6 +273,9 @@ tr:hover td{background:rgba(185,28,28,.02)}
         <div class="fld"><label>勤務地住所（店舗名）</label><input type="text" id="i_work" placeholder="勤務先住所・店舗名"></div>
         <div class="fld"><label>自宅住所</label><input type="text" id="i_home" placeholder="自宅住所"></div>
         <div class="fld"><label>連絡先</label><input type="text" id="i_contact" placeholder="電話番号・LINEなど"></div>
+        <div class="fld"><label>申し込み</label>
+          <select id="i_status"><option value="">未定</option><option value="済み">済み</option><option value="確定">確定</option><option value="未定">未定</option></select>
+        </div>
       </div>
       <div class="form-actions">
         <button class="btn-clear" onclick="clearForm()">クリア</button>
@@ -305,6 +320,7 @@ tr:hover td{background:rgba(185,28,28,.02)}
           <button class="btn-add" onclick="checkPw()" style="white-space:nowrap">開く</button>
         </div>
         <p id="pwErr" style="color:#b91c1c;font-size:12px;display:none">パスワードが違います</p>
+        <p style="font-size:12px;color:#9b8878;margin-top:8px">※パスワードは「hatanaka」</p>
       </div>
       <div id="urlOpened" style="display:none">
         <div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
@@ -351,6 +367,9 @@ tr:hover td{background:rgba(185,28,28,.02)}
       <div class="fld"><label>勤務地</label><input type="text" id="e_work"></div>
       <div class="fld"><label>自宅住所</label><input type="text" id="e_home"></div>
       <div class="fld"><label>連絡先</label><input type="text" id="e_contact"></div>
+      <div class="fld"><label>申し込み</label>
+        <select id="e_status"><option value="">未定</option><option value="済み">済み</option><option value="確定">確定</option><option value="未定">未定</option></select>
+      </div>
     </div>
     <div class="form-actions">
       <button class="btn-clear" onclick="closeEdit()">キャンセル</button>
@@ -387,6 +406,7 @@ let members = [];   // {fbKey, han, wari, name, gender, work, home, contact}
 let scheds   = [];  // {fbKey, date, shop, addr, people[]}
 let filterHan = 'all';
 let filterWari = 'all';
+let filterStatus = 'all';
 let editKey = null;      // fbKey
 let schedEditKey = null; // fbKey
 
@@ -454,15 +474,8 @@ async function pollAll() {
 
 // ---- 起動 ----
 function startApp() {
-  if (!DB_URL) {
-    document.getElementById('setupScreen').style.display = '';
-    document.getElementById('mainApp').style.display = 'none';
-    return;
-  }
   document.getElementById('setupScreen').style.display = 'none';
   document.getElementById('mainApp').style.display = '';
-  const cfgInput = document.getElementById('cfg_url');
-  if (cfgInput) cfgInput.value = DB_URL;
   startPolling();
 }
 
@@ -506,6 +519,12 @@ function setWari(v, btn) {
   else if(v==='C') btn.classList.add('on-C');
   render();
 }
+function setStatus(v, btn) {
+  filterStatus = v;
+  document.querySelectorAll('[data-s]').forEach(b => b.className = 'pill');
+  btn.classList.add('on');
+  render();
+}
 
 // ---- レンダリング ----
 function render() {
@@ -513,8 +532,9 @@ function render() {
   const filtered = members.filter(m => {
     const mh = filterHan==='all' || m.han===filterHan;
     const mw = filterWari==='all' || m.wari===filterWari;
+    const ms = filterStatus==='all' || (m.status||'未定')===filterStatus || (filterStatus==='未定' && !m.status);
     const mq = !q || [m.han,m.name,m.work,m.home,m.contact].some(v=>v&&v.toLowerCase().includes(q));
-    return mh&&mw&&mq;
+    return mh&&mw&&ms&&mq;
   });
 
   document.getElementById('sTotal').textContent = members.length;
@@ -537,7 +557,10 @@ function render() {
   tbody.innerHTML = filtered.map((m,i) => {
     const bc = {A:'ba',B:'bb',C:'bc'}[m.wari]||'bx';
     const gc = {男:'gm',女:'gf'}[m.gender]||'';
-    return `<tr>
+    const st = m.status||'未定';
+    const sc = st==='済み'?'st-done':st==='確定'?'st-kakutei':'st-miteи';
+    const rowCls = st==='済み' ? 'row-moshi' : '';
+    return `<tr class="${rowCls}">
       <td style="color:#bbb;font-size:11px">${i+1}</td>
       <td style="font-size:12px;color:#9b8878">${esc(m.han||'—')}</td>
       <td><span class="badge ${bc}">${m.wari||'—'}</span></td>
@@ -546,6 +569,7 @@ function render() {
       <td style="font-size:12px">${esc(m.work||'—')}</td>
       <td style="font-size:12px">${esc(m.home||'—')}</td>
       <td style="font-size:12px">${esc(m.contact||'—')}</td>
+      <td><span class="stag ${sc}">${esc(st)}</span></td>
       <td style="white-space:nowrap">
         <button class="act-btn" onclick="openEdit('${m.fbKey}')">編集</button>
         <button class="del-btn" onclick="delMember('${m.fbKey}','${esc(m.name||'')}')">削除</button>
@@ -556,12 +580,16 @@ function render() {
   cardList.innerHTML = filtered.map(m => {
     const bc = {A:'ba',B:'bb',C:'bc'}[m.wari]||'bx';
     const gc = {男:'gm',女:'gf'}[m.gender]||'';
-    return `<div class="card">
+    const st = m.status||'未定';
+    const sc = st==='済み'?'st-done':st==='確定'?'st-kakutei':'st-miteи';
+    const cardStyle = st==='済み' ? 'background:#fff5f5;border-color:#fca5a5;' : '';
+    return `<div class="card" style="${cardStyle}">
       <div class="card-top">
         <span class="badge ${bc}" style="width:28px;height:28px;font-size:13px">${m.wari||'—'}</span>
         <span class="card-name">${esc(m.name||'—')}</span>
         ${m.han?`<span class="card-han">${esc(m.han)}</span>`:''}
         ${m.gender?`<span class="gtag ${gc}" style="font-size:11px">${esc(m.gender)}</span>`:''}
+        <span class="stag ${sc}" style="margin-left:auto">${esc(st)}</span>
       </div>
       ${m.work?`<div class="card-row"><span class="card-lbl">勤務地</span><span class="card-val">${esc(m.work)}</span></div>`:''}
       ${m.home?`<div class="card-row"><span class="card-lbl">自宅住所</span><span class="card-val">${esc(m.home)}</span></div>`:''}
@@ -591,6 +619,7 @@ async function addMember() {
       work: document.getElementById('i_work').value.trim(),
       home: document.getElementById('i_home').value.trim(),
       contact: document.getElementById('i_contact').value.trim(),
+      status: document.getElementById('i_status').value || '未定',
       createdAt: Date.now()
     });
     clearForm();
@@ -601,7 +630,7 @@ async function addMember() {
 }
 
 function clearForm() {
-  ['i_han','i_wari','i_name','i_gender','i_work','i_home','i_contact'].forEach(id => {
+  ['i_han','i_wari','i_name','i_gender','i_work','i_home','i_contact','i_status'].forEach(id => {
     const el = document.getElementById(id);
     if(el.tagName==='SELECT') el.selectedIndex=0; else el.value='';
   });
@@ -619,6 +648,7 @@ function openEdit(fbKey) {
   document.getElementById('e_work').value = m.work||'';
   document.getElementById('e_home').value = m.home||'';
   document.getElementById('e_contact').value = m.contact||'';
+  document.getElementById('e_status').value = m.status||'未定';
   document.getElementById('editOverlay').classList.add('open');
 }
 function closeEdit() { document.getElementById('editOverlay').classList.remove('open'); editKey=null; }
@@ -633,6 +663,7 @@ async function saveEdit() {
       work: document.getElementById('e_work').value.trim(),
       home: document.getElementById('e_home').value.trim(),
       contact: document.getElementById('e_contact').value.trim(),
+      status: document.getElementById('e_status').value || '未定',
       updatedAt: Date.now()
     });
     closeEdit(); toast('更新しました ✓'); await pollAll();
