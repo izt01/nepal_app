@@ -257,7 +257,7 @@ tr.row-moshi:hover td{background:#ffe8e8}
       <div class="input-header">メンバー情報を入力</div>
       <div class="input-sub">ご自身の班のメンバー情報を入力して「追加する」を押してください</div>
       <div class="form-grid">
-        <div class="fld"><label>班名 *</label><input type="text" id="i_han" placeholder="例：〇〇班 ※「班」まで記入"></div>
+        <div class="fld"><label>班名 *</label><input type="text" id="i_han" placeholder="例：第1班・東京班"></div>
         <div class="fld"><label>割振り</label>
           <select id="i_wari">
             <option value="">未分類</option>
@@ -286,6 +286,19 @@ tr.row-moshi:hover td{background:#ffe8e8}
 
   <!-- 予定 -->
   <div id="tab-sched" style="display:none">
+
+    <!-- 通知許可バナー -->
+    <div id="notifBanner" style="display:none;background:#fef9c3;border:1.5px solid #fcd34d;border-radius:10px;padding:12px 14px;margin:12px 0;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#92400e">🔔 予定の通知を受け取りますか？</div>
+        <div style="font-size:12px;color:#a16207;margin-top:2px">許可すると予定が追加・更新された時に通知が届きます</div>
+      </div>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <button onclick="requestNotifPermission()" style="padding:7px 14px;background:#b91c1c;color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">許可する</button>
+        <button onclick="document.getElementById('notifBanner').style.display='none'" style="padding:7px 10px;background:#fff;color:#7a6a5a;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:13px;cursor:pointer">閉じる</button>
+      </div>
+    </div>
+
     <div class="input-section">
       <div class="input-header">予定を追加</div>
       <div class="input-sub">訪問予定の情報を入力してください</div>
@@ -457,7 +470,9 @@ function startPolling() {
 async function pollAll() {
   try {
     const [mData, sData] = await Promise.all([fbGet('members'), fbGet('schedules')]);
-    members = mData ? Object.entries(mData).map(([k,v])=>({fbKey:k,...v})) : [];
+    const wariOrder = {'A':0,'B':1,'C':2,'':3};
+    members = mData ? Object.entries(mData).map(([k,v])=>({fbKey:k,...v}))
+      .sort((a,b) => (wariOrder[a.wari??'']??3) - (wariOrder[b.wari??'']??3)) : [];
     scheds   = sData ? Object.entries(sData).map(([k,v])=>({fbKey:k,...v}))
                            .sort((a,b)=> (b.createdAt||0)-(a.createdAt||0)) : [];
     setLive(true);
@@ -689,7 +704,10 @@ async function addSched() {
   btn.disabled=true; btn.textContent='保存中…';
   try {
     await fbPost('schedules', { date, shop, addr: document.getElementById('s_addr').value.trim(), people, createdAt: Date.now() });
-    clearSchedForm(); toast(`「${shop}」の予定を追加しました ✓`); await pollAll();
+    clearSchedForm();
+    toast(`「${shop}」の予定を追加しました ✓`);
+    pushNotif('📅 予定が追加されました', `${shop}（${date}）`);
+    await pollAll();
   } catch(e) { toast('保存に失敗しました'); }
   btn.disabled=false; btn.textContent='追加する';
 }
@@ -714,6 +732,7 @@ function renderSched() {
           <div class="sched-shop">${esc(s.shop)}</div>
         </div>
         <div style="display:flex;gap:5px;flex-shrink:0">
+          <button class="act-btn" onclick="sendManualNotif('${esc(s.shop)}','${esc(s.date)}')">🔔 通知</button>
           <button class="act-btn" onclick="openSchedEdit('${s.fbKey}')">編集</button>
           <button class="del-btn" onclick="delSched('${s.fbKey}','${esc(s.shop)}')">削除</button>
         </div>
@@ -745,13 +764,60 @@ async function saveSchedEdit() {
       people: pr ? pr.split(/[,，、]/).map(s=>s.trim()).filter(Boolean) : [],
       updatedAt: Date.now()
     });
-    closeSchedEdit(); toast('予定を更新しました ✓'); await pollAll();
+    closeSchedEdit();
+    toast('予定を更新しました ✓');
+    pushNotif('📅 予定が更新されました', `${document.getElementById('se_shop').value.trim()}（${document.getElementById('se_date').value.trim()}）`);
+    await pollAll();
   } catch(e) { toast('更新に失敗しました'); }
 }
 async function delSched(fbKey, shop) {
   if(!confirm(`「${shop}」の予定を削除しますか？`)) return;
   try { await fbDelete(`schedules/${fbKey}`); toast('予定を削除しました'); await pollAll(); }
   catch(e) { toast('削除に失敗しました'); }
+}
+
+// ======== プッシュ通知 ========
+function initNotif() {
+  if (!('Notification' in window)) return;
+  if (Notification.permission === 'default') {
+    document.getElementById('notifBanner').style.display = 'flex';
+  }
+}
+
+async function requestNotifPermission() {
+  if (!('Notification' in window)) { toast('このブラウザは通知に対応していません'); return; }
+  const result = await Notification.requestPermission();
+  if (result === 'granted') {
+    document.getElementById('notifBanner').style.display = 'none';
+    toast('通知を許可しました ✓');
+    new Notification('ネパール人総会 結集名簿', {
+      body: '通知の設定が完了しました！',
+      icon: 'https://cdn.jsdelivr.net/npm/twemoji@14/assets/72x72/1f1f3-1f1f5.png'
+    });
+  } else {
+    toast('通知が拒否されました');
+  }
+}
+
+function pushNotif(title, body) {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  try {
+    new Notification(title, {
+      body,
+      icon: 'https://cdn.jsdelivr.net/npm/twemoji@14/assets/72x72/1f1f3-1f1f5.png',
+      badge: 'https://cdn.jsdelivr.net/npm/twemoji@14/assets/72x72/1f514.png'
+    });
+  } catch(e) {}
+}
+
+function sendManualNotif(shop, date) {
+  if (!('Notification' in window) || Notification.permission !== 'granted') {
+    toast('通知を許可してから送信してください');
+    document.getElementById('notifBanner').style.display = 'flex';
+    return;
+  }
+  pushNotif('📅 予定のお知らせ', `${shop}（${date}）の予定があります`);
+  toast('通知を送信しました ✓');
 }
 
 // ---- パスワード ----
@@ -778,6 +844,7 @@ document.getElementById('editOverlay').addEventListener('click', function(e){ if
 document.getElementById('schedEditOverlay').addEventListener('click', function(e){ if(e.target===this) closeSchedEdit(); });
 
 startApp();
+initNotif();
 </script>
 </body>
 </html>
