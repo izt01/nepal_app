@@ -10,6 +10,7 @@
 <meta name="theme-color" content="#B91C1C">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -263,7 +264,7 @@ tr.row-moshi:hover td{background:#ffe8e8}
       <div class="input-header">メンバー情報を入力</div>
       <div class="input-sub">ご自身の班のメンバー情報を入力して「追加する」を押してください</div>
       <div class="form-grid">
-        <div class="fld"><label>班名 *</label><input type="text" id="i_han" placeholder="例：〇〇班 ※「班」まで入力"></div>
+        <div class="fld"><label>班名 *</label><input type="text" id="i_han" placeholder="例：〇〇班 ※「班」まで記入"></div>
         <div class="fld"><label>割振り</label>
           <select id="i_wari">
             <option value="">未分類</option>
@@ -312,7 +313,12 @@ tr.row-moshi:hover td{background:#ffe8e8}
       <div class="input-header">予定を追加</div>
       <div class="input-sub">訪問予定の情報を入力してください</div>
       <div class="form-grid" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))">
-        <div class="fld" style="grid-column:1/-1"><label>日付・時間 *</label><input type="text" id="s_date" placeholder="例：4月15日 14時〜"></div>
+        <div class="fld" style="grid-column:1/-1">
+          <label>日付・時間 *</label>
+          <input type="text" id="s_date" placeholder="例：4月15日 14時〜">
+          <input type="datetime-local" id="s_datetime" style="width:100%;margin-top:6px;padding:9px 11px;border:1.5px solid #e0d8ce;border-radius:8px;font-family:inherit;font-size:14px;background:#fafafa;outline:none;color:#1a1410" title="1時間前通知に使用します（任意）">
+          <div style="font-size:11px;color:#b0a090;margin-top:3px">↑ 1時間前通知を使う場合は日時も選択してください</div>
+        </div>
         <div class="fld"><label>店名 *</label><input type="text" id="s_shop" placeholder="店名を入力"></div>
         <div class="fld"><label>住所</label><input type="text" id="s_addr" placeholder="住所を入力"></div>
         <div class="fld" style="grid-column:1/-1"><label>行く人（予定）</label><input type="text" id="s_people" placeholder="例：田中, 鈴木, 山田（カンマ区切り）"></div>
@@ -411,7 +417,12 @@ tr.row-moshi:hover td{background:#ffe8e8}
   <div class="modal">
     <div class="modal-title">📅 予定を編集</div>
     <div class="form-grid" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))">
-      <div class="fld" style="grid-column:1/-1"><label>日付・時間</label><input type="text" id="se_date" placeholder="例：4月15日 14時〜"></div>
+      <div class="fld" style="grid-column:1/-1">
+        <label>日付・時間</label>
+        <input type="text" id="se_date" placeholder="例：4月15日 14時〜">
+        <input type="datetime-local" id="se_datetime" style="width:100%;margin-top:6px;padding:9px 11px;border:1.5px solid #e0d8ce;border-radius:8px;font-family:inherit;font-size:14px;background:#fafafa;outline:none;color:#1a1410" title="1時間前通知用">
+        <div style="font-size:11px;color:#b0a090;margin-top:3px">↑ 1時間前通知を使う場合は日時も選択してください</div>
+      </div>
       <div class="fld"><label>店名</label><input type="text" id="se_shop"></div>
       <div class="fld"><label>住所</label><input type="text" id="se_addr"></div>
       <div class="fld" style="grid-column:1/-1"><label>行く人（予定）</label><input type="text" id="se_people" placeholder="カンマ区切り"></div>
@@ -726,7 +737,14 @@ async function addSched() {
   const btn = document.getElementById('schedAddBtn');
   btn.disabled=true; btn.textContent='保存中…';
   try {
-    await fbPost('schedules', { date, shop, addr: document.getElementById('s_addr').value.trim(), people, memo: document.getElementById('s_memo').value.trim(), createdAt: Date.now() });
+    await fbPost('schedules', {
+      date, shop,
+      addr: document.getElementById('s_addr').value.trim(),
+      people,
+      memo: document.getElementById('s_memo').value.trim(),
+      datetime: document.getElementById('s_datetime').value || '',
+      createdAt: Date.now()
+    });
     clearSchedForm();
     toast(`「${shop}」の予定を追加しました ✓`);
     pushNotif('📅 予定が追加されました', `${shop}（${date}）`);
@@ -738,6 +756,7 @@ async function addSched() {
 function clearSchedForm() {
   ['s_date','s_shop','s_addr','s_people'].forEach(id => document.getElementById(id).value='');
   document.getElementById('s_memo').value='';
+  document.getElementById('s_datetime').value='';
 }
 
 function renderSched() {
@@ -776,6 +795,7 @@ function openSchedEdit(fbKey) {
   document.getElementById('se_addr').value = s.addr||'';
   document.getElementById('se_people').value = (s.people||[]).join(', ');
   document.getElementById('se_memo').value = s.memo||'';
+  document.getElementById('se_datetime').value = s.datetime||'';
   document.getElementById('schedEditOverlay').classList.add('open');
 }
 function closeSchedEdit() { document.getElementById('schedEditOverlay').classList.remove('open'); schedEditKey=null; }
@@ -789,6 +809,7 @@ async function saveSchedEdit() {
       addr: document.getElementById('se_addr').value.trim(),
       people: pr ? pr.split(/[,，、]/).map(s=>s.trim()).filter(Boolean) : [],
       memo: document.getElementById('se_memo').value.trim(),
+      datetime: document.getElementById('se_datetime').value || '',
       updatedAt: Date.now()
     });
     closeSchedEdit();
@@ -803,49 +824,119 @@ async function delSched(fbKey, shop) {
   catch(e) { toast('削除に失敗しました'); }
 }
 
-// ======== プッシュ通知 ========
-function initNotif() {
-  if (!('Notification' in window)) return;
-  if (Notification.permission === 'default') {
-    document.getElementById('notifBanner').style.display = 'flex';
+// ======== OneSignal 通知 ========
+// ⚠️ ここにOneSignalのApp IDを入力してください
+const ONESIGNAL_APP_ID = 'e8eff513-49f0-400d-a17a-3299ded9bf4f';
+
+let osReady = false;
+
+async function initOneSignal() {
+  if (!ONESIGNAL_APP_ID || ONESIGNAL_APP_ID === 'ここにApp IDを貼り付け') return;
+  try {
+    await window.OneSignalDeferred?.push(async (os) => {
+      await os.init({
+        appId: ONESIGNAL_APP_ID,
+        serviceWorkerPath: '/OneSignalSDKWorker.js',
+        notifyButton: { enable: false },
+        allowLocalhostAsSecureOrigin: true,
+      });
+      osReady = true;
+
+      const isSubscribed = await os.User.PushSubscription.optedIn;
+      if (!isSubscribed) {
+        document.getElementById('notifBanner').style.display = 'flex';
+      } else {
+        document.getElementById('notifBanner').style.display = 'none';
+        setLive(true);
+      }
+    });
+  } catch(e) {
+    console.warn('OneSignal init failed:', e);
   }
 }
 
 async function requestNotifPermission() {
-  if (!('Notification' in window)) { toast('このブラウザは通知に対応していません'); return; }
-  const result = await Notification.requestPermission();
-  if (result === 'granted') {
-    document.getElementById('notifBanner').style.display = 'none';
-    toast('通知を許可しました ✓');
-    new Notification('ネパール人総会 結集名簿', {
-      body: '通知の設定が完了しました！',
-      icon: 'https://cdn.jsdelivr.net/npm/twemoji@14/assets/72x72/1f1f3-1f1f5.png'
+  if (!ONESIGNAL_APP_ID || ONESIGNAL_APP_ID === 'ここにApp IDを貼り付け') {
+    toast('OneSignalのApp IDが設定されていません');
+    return;
+  }
+  try {
+    await window.OneSignalDeferred?.push(async (os) => {
+      await os.Notifications.requestPermission();
+      const granted = await os.Notifications.permission;
+      if (granted) {
+        document.getElementById('notifBanner').style.display = 'none';
+        toast('通知を許可しました ✓');
+        osReady = true;
+      } else {
+        toast('通知が拒否されました');
+      }
     });
-  } else {
-    toast('通知が拒否されました');
+  } catch(e) {
+    toast('通知の設定に失敗しました');
   }
 }
 
-function pushNotif(title, body) {
-  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+async function pushNotif(title, body) {
+  if (!ONESIGNAL_APP_ID || ONESIGNAL_APP_ID === 'ここにApp IDを貼り付け') return;
+  // OneSignal REST API経由で全員に送信
   try {
-    new Notification(title, {
-      body,
-      icon: 'https://cdn.jsdelivr.net/npm/twemoji@14/assets/72x72/1f1f3-1f1f5.png',
-      badge: 'https://cdn.jsdelivr.net/npm/twemoji@14/assets/72x72/1f514.png'
+    await fetch(`https://onesignal.com/api/v1/notifications`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        // REST API Keyはサーバー側に置くべきですが、
+        // 簡易利用のためここに入力してください
+        'Authorization': `Basic ${OS_REST_KEY}`
+      },
+      body: JSON.stringify({
+        app_id: ONESIGNAL_APP_ID,
+        included_segments: ['All'],
+        headings: { ja: title, en: title },
+        contents: { ja: body, en: body },
+        url: window.location.href,
+      })
     });
   } catch(e) {}
 }
 
+// OneSignal REST API Key（サーバーサイドキー）
+// ⚠️ ここにREST API Keyを入力してください
+const OS_REST_KEY = 'os_v2_app_5dx7ke2j6baa3il2gkm55wn7j5sy4wchpokelw4274bz7lqzi7uh7i5cbkknz3qqjiwfzgxtuqbmtv7btdgjm5dga3wdaycefjj2qai';
+
 function sendManualNotif(shop, date) {
-  if (!('Notification' in window) || Notification.permission !== 'granted') {
-    toast('通知を許可してから送信してください');
-    document.getElementById('notifBanner').style.display = 'flex';
-    return;
-  }
   pushNotif('📅 予定のお知らせ', `${shop}（${date}）の予定があります`);
   toast('通知を送信しました ✓');
 }
+
+// ======== 1時間前リマインダー ========
+const notifiedKeys = new Set(JSON.parse(localStorage.getItem('notified_keys')||'[]'));
+
+function saveNotifiedKeys() {
+  localStorage.setItem('notified_keys', JSON.stringify([...notifiedKeys].slice(-100)));
+}
+
+function checkReminders() {
+  const now = Date.now();
+  const ONE_HOUR = 60 * 60 * 1000;
+  const WINDOW = 2 * 60 * 1000;
+
+  scheds.forEach(s => {
+    if (!s.datetime) return;
+    const schedTime = new Date(s.datetime).getTime();
+    const diff = schedTime - now;
+    const reminderKey = `${s.fbKey}_1h`;
+
+    if (diff > 0 && diff <= ONE_HOUR + WINDOW && !notifiedKeys.has(reminderKey)) {
+      notifiedKeys.add(reminderKey);
+      saveNotifiedKeys();
+      // OneSignal経由で全員に送信（バックグラウンドでも届く）
+      pushNotif('⏰ 予定まであと1時間です', `${s.shop}（${s.date}）`);
+    }
+  });
+}
+
+setInterval(checkReminders, 60 * 1000);
 
 // ---- パスワード ----
 function checkPw() {
@@ -871,7 +962,7 @@ document.getElementById('editOverlay').addEventListener('click', function(e){ if
 document.getElementById('schedEditOverlay').addEventListener('click', function(e){ if(e.target===this) closeSchedEdit(); });
 
 startApp();
-initNotif();
+initOneSignal();
 
 // Service Worker 登録
 if ('serviceWorker' in navigator) {
