@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ネパール人総会 結集名簿</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="結集名簿">
+<meta name="theme-color" content="#B91C1C">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -257,7 +263,7 @@ tr.row-moshi:hover td{background:#ffe8e8}
       <div class="input-header">メンバー情報を入力</div>
       <div class="input-sub">ご自身の班のメンバー情報を入力して「追加する」を押してください</div>
       <div class="form-grid">
-        <div class="fld"><label>班名 *</label><input type="text" id="i_han" placeholder="例：〇〇班 ※「班」まで記入"></div>
+        <div class="fld"><label>班名 *</label><input type="text" id="i_han" placeholder="例：〇〇班 ※「班」まで入力"></div>
         <div class="fld"><label>割振り</label>
           <select id="i_wari">
             <option value="">未分類</option>
@@ -275,6 +281,9 @@ tr.row-moshi:hover td{background:#ffe8e8}
         <div class="fld"><label>連絡先</label><input type="text" id="i_contact" placeholder="電話番号・LINEなど"></div>
         <div class="fld"><label>申し込み</label>
           <select id="i_status"><option value="">未定</option><option value="済み">済み</option><option value="確定">確定</option><option value="未定">未定</option></select>
+        </div>
+        <div class="fld" style="grid-column:1/-1"><label>備考</label>
+          <textarea id="i_memo" placeholder="自由にメモを入力..." rows="2" style="width:100%;padding:9px 11px;border:1.5px solid #e0d8ce;border-radius:8px;font-family:inherit;font-size:14px;background:#fafafa;outline:none;transition:border-color .2s;color:#1a1410;resize:vertical" onfocus="this.style.borderColor='#b91c1c';this.style.background='#fff'" onblur="this.style.borderColor='#e0d8ce';this.style.background='#fafafa'"></textarea>
         </div>
       </div>
       <div class="form-actions">
@@ -307,6 +316,9 @@ tr.row-moshi:hover td{background:#ffe8e8}
         <div class="fld"><label>店名 *</label><input type="text" id="s_shop" placeholder="店名を入力"></div>
         <div class="fld"><label>住所</label><input type="text" id="s_addr" placeholder="住所を入力"></div>
         <div class="fld" style="grid-column:1/-1"><label>行く人（予定）</label><input type="text" id="s_people" placeholder="例：田中, 鈴木, 山田（カンマ区切り）"></div>
+        <div class="fld" style="grid-column:1/-1"><label>備考</label>
+          <textarea id="s_memo" placeholder="自由にメモを入力..." rows="2" style="width:100%;padding:9px 11px;border:1.5px solid #e0d8ce;border-radius:8px;font-family:inherit;font-size:14px;background:#fafafa;outline:none;transition:border-color .2s;color:#1a1410;resize:vertical" onfocus="this.style.borderColor='#b91c1c';this.style.background='#fff'" onblur="this.style.borderColor='#e0d8ce';this.style.background='#fafafa'"></textarea>
+        </div>
       </div>
       <div class="form-actions">
         <button class="btn-clear" onclick="clearSchedForm()">クリア</button>
@@ -383,6 +395,9 @@ tr.row-moshi:hover td{background:#ffe8e8}
       <div class="fld"><label>申し込み</label>
         <select id="e_status"><option value="">未定</option><option value="済み">済み</option><option value="確定">確定</option><option value="未定">未定</option></select>
       </div>
+      <div class="fld" style="grid-column:1/-1"><label>備考</label>
+        <textarea id="e_memo" rows="2" style="width:100%;padding:9px 11px;border:1.5px solid #e0d8ce;border-radius:8px;font-family:inherit;font-size:14px;background:#fafafa;outline:none;resize:vertical;color:#1a1410" onfocus="this.style.borderColor='#b91c1c';this.style.background='#fff'" onblur="this.style.borderColor='#e0d8ce';this.style.background='#fafafa'"></textarea>
+      </div>
     </div>
     <div class="form-actions">
       <button class="btn-clear" onclick="closeEdit()">キャンセル</button>
@@ -400,6 +415,9 @@ tr.row-moshi:hover td{background:#ffe8e8}
       <div class="fld"><label>店名</label><input type="text" id="se_shop"></div>
       <div class="fld"><label>住所</label><input type="text" id="se_addr"></div>
       <div class="fld" style="grid-column:1/-1"><label>行く人（予定）</label><input type="text" id="se_people" placeholder="カンマ区切り"></div>
+      <div class="fld" style="grid-column:1/-1"><label>備考</label>
+        <textarea id="se_memo" rows="2" style="width:100%;padding:9px 11px;border:1.5px solid #e0d8ce;border-radius:8px;font-family:inherit;font-size:14px;background:#fafafa;outline:none;resize:vertical;color:#1a1410" onfocus="this.style.borderColor='#b91c1c';this.style.background='#fff'" onblur="this.style.borderColor='#e0d8ce';this.style.background='#fafafa'"></textarea>
+      </div>
     </div>
     <div class="form-actions">
       <button class="btn-clear" onclick="closeSchedEdit()">キャンセル</button>
@@ -609,6 +627,7 @@ function render() {
       ${m.work?`<div class="card-row"><span class="card-lbl">勤務地</span><span class="card-val">${esc(m.work)}</span></div>`:''}
       ${m.home?`<div class="card-row"><span class="card-lbl">自宅住所</span><span class="card-val">${esc(m.home)}</span></div>`:''}
       ${m.contact?`<div class="card-row"><span class="card-lbl">連絡先</span><span class="card-val">${esc(m.contact)}</span></div>`:''}
+      ${m.memo?`<div class="card-row" style="margin-top:6px;padding-top:6px;border-top:1px solid #ede8e0"><span class="card-lbl">備考</span><span class="card-val" style="white-space:pre-wrap;line-height:1.6">${esc(m.memo)}</span></div>`:''}
       <div class="card-actions">
         <button class="card-edit" onclick="openEdit('${m.fbKey}')">編集</button>
         <button class="card-del" onclick="delMember('${m.fbKey}','${esc(m.name||'')}')">削除</button>
@@ -635,6 +654,7 @@ async function addMember() {
       home: document.getElementById('i_home').value.trim(),
       contact: document.getElementById('i_contact').value.trim(),
       status: document.getElementById('i_status').value || '未定',
+      memo: document.getElementById('i_memo').value.trim(),
       createdAt: Date.now()
     });
     clearForm();
@@ -649,6 +669,7 @@ function clearForm() {
     const el = document.getElementById(id);
     if(el.tagName==='SELECT') el.selectedIndex=0; else el.value='';
   });
+  document.getElementById('i_memo').value='';
 }
 
 // ---- メンバー編集 ----
@@ -664,6 +685,7 @@ function openEdit(fbKey) {
   document.getElementById('e_home').value = m.home||'';
   document.getElementById('e_contact').value = m.contact||'';
   document.getElementById('e_status').value = m.status||'未定';
+  document.getElementById('e_memo').value = m.memo||'';
   document.getElementById('editOverlay').classList.add('open');
 }
 function closeEdit() { document.getElementById('editOverlay').classList.remove('open'); editKey=null; }
@@ -679,6 +701,7 @@ async function saveEdit() {
       home: document.getElementById('e_home').value.trim(),
       contact: document.getElementById('e_contact').value.trim(),
       status: document.getElementById('e_status').value || '未定',
+      memo: document.getElementById('e_memo').value.trim(),
       updatedAt: Date.now()
     });
     closeEdit(); toast('更新しました ✓'); await pollAll();
@@ -703,7 +726,7 @@ async function addSched() {
   const btn = document.getElementById('schedAddBtn');
   btn.disabled=true; btn.textContent='保存中…';
   try {
-    await fbPost('schedules', { date, shop, addr: document.getElementById('s_addr').value.trim(), people, createdAt: Date.now() });
+    await fbPost('schedules', { date, shop, addr: document.getElementById('s_addr').value.trim(), people, memo: document.getElementById('s_memo').value.trim(), createdAt: Date.now() });
     clearSchedForm();
     toast(`「${shop}」の予定を追加しました ✓`);
     pushNotif('📅 予定が追加されました', `${shop}（${date}）`);
@@ -714,6 +737,7 @@ async function addSched() {
 
 function clearSchedForm() {
   ['s_date','s_shop','s_addr','s_people'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('s_memo').value='';
 }
 
 function renderSched() {
@@ -739,6 +763,7 @@ function renderSched() {
       </div>
       ${s.addr?`<div class="sched-addr"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${esc(s.addr)}</div>`:''}
       ${s.people&&s.people.length?`<div class="sched-people-label">行く人（予定）</div><div class="sched-people">${s.people.map(p=>`<span class="person-tag">${esc(p)}</span>`).join('')}</div>`:''}
+      ${s.memo?`<div style="margin-top:8px;padding-top:8px;border-top:1px solid #ede8e0"><div style="font-size:10px;font-weight:700;color:#b0a090;letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px">備考</div><div style="font-size:12px;color:#5c4a3a;white-space:pre-wrap;line-height:1.6">${esc(s.memo)}</div></div>`:''}
     </div>`).join('');
 }
 
@@ -750,6 +775,7 @@ function openSchedEdit(fbKey) {
   document.getElementById('se_shop').value = s.shop||'';
   document.getElementById('se_addr').value = s.addr||'';
   document.getElementById('se_people').value = (s.people||[]).join(', ');
+  document.getElementById('se_memo').value = s.memo||'';
   document.getElementById('schedEditOverlay').classList.add('open');
 }
 function closeSchedEdit() { document.getElementById('schedEditOverlay').classList.remove('open'); schedEditKey=null; }
@@ -762,6 +788,7 @@ async function saveSchedEdit() {
       shop: document.getElementById('se_shop').value.trim(),
       addr: document.getElementById('se_addr').value.trim(),
       people: pr ? pr.split(/[,，、]/).map(s=>s.trim()).filter(Boolean) : [],
+      memo: document.getElementById('se_memo').value.trim(),
       updatedAt: Date.now()
     });
     closeSchedEdit();
@@ -845,6 +872,11 @@ document.getElementById('schedEditOverlay').addEventListener('click', function(e
 
 startApp();
 initNotif();
+
+// Service Worker 登録
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(()=>{});
+}
 </script>
 </body>
 </html>
