@@ -228,17 +228,21 @@ tr.row-moshi:hover td{background:#ffe8e8}
       </div>
       <div class="pill-group" id="hanFilters"></div>
       <div class="pill-group">
-        <button class="pill on" data-w="all" onclick="setWari('all',this)">すべて</button>
-        <button class="pill" data-w="A" onclick="setWari('A',this)">A</button>
-        <button class="pill" data-w="B" onclick="setWari('B',this)">B</button>
-        <button class="pill" data-w="C" onclick="setWari('C',this)">C</button>
-        <button class="pill" data-w="" onclick="setWari('',this)">未分類</button>
+        <button class="pill on" data-w="all" onclick="toggleWari('all',this)">割振り：全て</button>
+        <button class="pill" data-w="A" onclick="toggleWari('A',this)">A</button>
+        <button class="pill" data-w="B" onclick="toggleWari('B',this)">B</button>
+        <button class="pill" data-w="C" onclick="toggleWari('C',this)">C</button>
+        <button class="pill" data-w="" onclick="toggleWari('',this)">未分類</button>
       </div>
       <div class="pill-group">
-        <button class="pill on" data-s="all" onclick="setStatus('all',this)">申込：全て</button>
-        <button class="pill" data-s="済み" onclick="setStatus('済み',this)">済み</button>
-        <button class="pill" data-s="確定" onclick="setStatus('確定',this)">確定</button>
-        <button class="pill" data-s="未定" onclick="setStatus('未定',this)">未定</button>
+        <button class="pill on" data-s="all" onclick="toggleStatus('all',this)">申込：全て</button>
+        <button class="pill" data-s="済み" onclick="toggleStatus('済み',this)">済み</button>
+        <button class="pill" data-s="確定" onclick="toggleStatus('確定',this)">確定</button>
+        <button class="pill" data-s="未定" onclick="toggleStatus('未定',this)">未定</button>
+      </div>
+      <div class="pill-group" style="margin-left:auto">
+        <button class="pill" onclick="exportExcel()" style="background:#f0fdf4;border-color:#86efac;color:#166534">📊 Excel</button>
+        <button class="pill" onclick="exportPDF()" style="background:#fef2f2;border-color:#fca5a5;color:#991b1b">📄 PDF</button>
       </div>
     </div>
     <div class="legend">
@@ -264,7 +268,7 @@ tr.row-moshi:hover td{background:#ffe8e8}
       <div class="input-header">メンバー情報を入力</div>
       <div class="input-sub">ご自身の班のメンバー情報を入力して「追加する」を押してください</div>
       <div class="form-grid">
-        <div class="fld"><label>班名 *</label><input type="text" id="i_han" placeholder="例：〇〇班 ※「班」まで記入"></div>
+        <div class="fld"><label>班名 *</label><input type="text" id="i_han" placeholder="例：第1班・東京班"></div>
         <div class="fld"><label>割振り</label>
           <select id="i_wari">
             <option value="">未分類</option>
@@ -446,9 +450,9 @@ tr.row-moshi:hover td{background:#ffe8e8}
 let DB_URL = localStorage.getItem('fb_url') || 'https://nepal-roster-default-rtdb.firebaseio.com';
 let members = [];   // {fbKey, han, wari, name, gender, work, home, contact}
 let scheds   = [];  // {fbKey, date, shop, addr, people[]}
-let filterHan = 'all';
-let filterWari = 'all';
-let filterStatus = 'all';
+let filterHans = new Set(['all']);   // 'all' or Set of han names
+let filterWaris = new Set(['all']);  // 'all' or Set of wari values
+let filterStatuses = new Set(['all']); // 'all' or Set of status values
 let editKey = null;      // fbKey
 let schedEditKey = null; // fbKey
 
@@ -533,40 +537,90 @@ function showTab(name, btn) {
   btn.classList.add('active');
 }
 
-// ---- フィルタ ----
+// ---- フィルタ（複数選択対応）----
 function buildHanFilters() {
   const hans = [...new Set(members.map(m=>m.han).filter(Boolean))].sort();
   const wrap = document.getElementById('hanFilters');
-  const cur = filterHan;
-  wrap.innerHTML = `<button class="pill ${cur==='all'?'on':''}" data-han="all" onclick="setHan('all',this)">全班</button>`;
+  wrap.innerHTML = `<button class="pill ${filterHans.has('all')?'on':''}" data-han="all" onclick="toggleHan('all',this)">全班</button>`;
   hans.forEach(h => {
     const b = document.createElement('button');
-    b.className = 'pill' + (cur===h?' on':'');
+    b.className = 'pill' + (filterHans.has(h)?' on':'');
     b.dataset.han = h;
     b.textContent = h;
-    b.onclick = () => setHan(h, b);
+    b.onclick = () => toggleHan(h, b);
     wrap.appendChild(b);
   });
 }
-function setHan(v, btn) {
-  filterHan = v;
-  document.querySelectorAll('[data-han]').forEach(b => b.classList.remove('on'));
-  btn.classList.add('on');
+
+function toggleHan(v, btn) {
+  if (v === 'all') {
+    filterHans = new Set(['all']);
+    document.querySelectorAll('[data-han]').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+  } else {
+    filterHans.delete('all');
+    document.querySelector('[data-han="all"]')?.classList.remove('on');
+    if (filterHans.has(v)) {
+      filterHans.delete(v);
+      btn.classList.remove('on');
+      if (filterHans.size === 0) {
+        filterHans.add('all');
+        document.querySelector('[data-han="all"]')?.classList.add('on');
+      }
+    } else {
+      filterHans.add(v);
+      btn.classList.add('on');
+    }
+  }
   render();
 }
-function setWari(v, btn) {
-  filterWari = v;
-  document.querySelectorAll('[data-w]').forEach(b => b.className = 'pill');
-  btn.classList.add('on');
-  if(v==='A') btn.classList.add('on-A');
-  else if(v==='B') btn.classList.add('on-B');
-  else if(v==='C') btn.classList.add('on-C');
+
+function toggleWari(v, btn) {
+  if (v === 'all') {
+    filterWaris = new Set(['all']);
+    document.querySelectorAll('[data-w]').forEach(b => { b.className='pill'; });
+    btn.classList.add('on');
+  } else {
+    filterWaris.delete('all');
+    document.querySelector('[data-w="all"]')?.classList.remove('on');
+    if (filterWaris.has(v)) {
+      filterWaris.delete(v);
+      btn.classList.remove('on');
+      if (filterWaris.size === 0) {
+        filterWaris.add('all');
+        document.querySelector('[data-w="all"]')?.classList.add('on');
+      }
+    } else {
+      filterWaris.add(v);
+      btn.classList.add('on');
+      if(v==='A') btn.classList.add('on-A');
+      else if(v==='B') btn.classList.add('on-B');
+      else if(v==='C') btn.classList.add('on-C');
+    }
+  }
   render();
 }
-function setStatus(v, btn) {
-  filterStatus = v;
-  document.querySelectorAll('[data-s]').forEach(b => b.className = 'pill');
-  btn.classList.add('on');
+
+function toggleStatus(v, btn) {
+  if (v === 'all') {
+    filterStatuses = new Set(['all']);
+    document.querySelectorAll('[data-s]').forEach(b => { b.className='pill'; });
+    btn.classList.add('on');
+  } else {
+    filterStatuses.delete('all');
+    document.querySelector('[data-s="all"]')?.classList.remove('on');
+    if (filterStatuses.has(v)) {
+      filterStatuses.delete(v);
+      btn.classList.remove('on');
+      if (filterStatuses.size === 0) {
+        filterStatuses.add('all');
+        document.querySelector('[data-s="all"]')?.classList.add('on');
+      }
+    } else {
+      filterStatuses.add(v);
+      btn.classList.add('on');
+    }
+  }
   render();
 }
 
@@ -574,9 +628,10 @@ function setStatus(v, btn) {
 function render() {
   const q = (document.getElementById('searchQ').value||'').toLowerCase();
   const filtered = members.filter(m => {
-    const mh = filterHan==='all' || m.han===filterHan;
-    const mw = filterWari==='all' || m.wari===filterWari;
-    const ms = filterStatus==='all' || (m.status||'未定')===filterStatus || (filterStatus==='未定' && !m.status);
+    const mh = filterHans.has('all') || filterHans.has(m.han||'');
+    const mw = filterWaris.has('all') || filterWaris.has(m.wari||'');
+    const st = m.status||'未定';
+    const ms = filterStatuses.has('all') || filterStatuses.has(st);
     const mq = !q || [m.han,m.name,m.work,m.home,m.contact].some(v=>v&&v.toLowerCase().includes(q));
     return mh&&mw&&ms&&mq;
   });
@@ -937,6 +992,148 @@ function checkReminders() {
 }
 
 setInterval(checkReminders, 60 * 1000);
+
+// ======== Excel / PDF 出力 ========
+function getExportData() {
+  return [...members]
+    .sort((a,b) => (a.han||'').localeCompare(b.han||'', 'ja'))
+    .map((m,i) => ({
+      番号: i+1,
+      班名: m.han||'',
+      割振り: m.wari||'',
+      氏名: m.name||'',
+      住所: m.work || m.home || '',
+      申し込み: m.status||'未定',
+    }));
+}
+
+function exportExcel() {
+  const data = getExportData();
+  const header = ['番号','班名','割振り','氏名','住所','申し込み'];
+  const rows = data.map(r => header.map(h => r[h]));
+  const csv = [header, ...rows].map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `ネパール総会名簿_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  toast('Excelファイルをダウンロードしました ✓');
+}
+
+function exportPDF() {
+  const data = getExportData();
+  const dateStr = new Date().toLocaleDateString('ja-JP');
+
+  const stColor = {'済み':'#991b1b','確定':'#166534','未定':'#92400e'};
+  const stBg    = {'済み':'#fee2e2','確定':'#dcfce7','未定':'#fef9c3'};
+  const wariColor = {'A':'#16a34a','B':'#1d6fae','C':'#6b7280'};
+
+  const countDone   = data.filter(r=>r['申し込み']==='済み').length;
+  const countKakutei= data.filter(r=>r['申し込み']==='確定').length;
+  const countMitei  = data.filter(r=>r['申し込み']==='未定').length;
+
+  const rows = data.map(r => `
+    <tr class="${r['申し込み']==='済み'?'row-done':''}">
+      <td class="c-no">${r['番号']}</td>
+      <td class="c-han">${r['班名']}</td>
+      <td class="c-wari"><span class="wbadge" style="background:${wariColor[r['割振り']]||'#ccc'}">${r['割振り']||'—'}</span></td>
+      <td class="c-name">${r['氏名']}</td>
+      <td class="c-addr">${r['住所']}</td>
+      <td class="c-st"><span class="stag" style="color:${stColor[r['申し込み']]||'#374151'};background:${stBg[r['申し込み']]||'#f3f4f6'}">${r['申し込み']}</span></td>
+    </tr>`).join('');
+
+  const html = `<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+<title>ネパール総会名簿</title>
+<style>
+@page { size: A4 portrait; margin: 10mm 8mm; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Noto Sans JP', 'Hiragino Sans', 'Meiryo', sans-serif; font-size: 8.5pt; color: #1a1410; }
+
+.header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 3mm; border-bottom: 2px solid #b91c1c; padding-bottom: 2.5mm; }
+.title { font-size: 13pt; font-weight: 900; color: #b91c1c; }
+.meta { font-size: 7.5pt; color: #7a6a5a; text-align: right; line-height: 1.6; }
+
+.summary { display: flex; gap: 6mm; margin-bottom: 3mm; font-size: 8pt; }
+.sum-item { display: flex; align-items: center; gap: 2mm; }
+.sum-dot { width: 8pt; height: 8pt; border-radius: 2pt; display: inline-block; }
+.sum-label { color: #5c4a3a; }
+.sum-count { font-weight: 700; }
+
+table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+col.c1 { width: 14pt; }
+col.c2 { width: 44pt; }
+col.c3 { width: 16pt; }
+col.c4 { width: 210pt; }
+col.c5 { width: auto; }
+col.c6 { width: 26pt; }
+
+th { background: #b91c1c; color: #fff; font-size: 7.5pt; font-weight: 700; padding: 3px 4px; text-align: left; }
+td { padding: 2.5px 4px; border-bottom: 0.4pt solid #e8ddd0; vertical-align: top; line-height: 1.45; }
+tr:nth-child(even) td { background: #faf5ee; }
+tr.row-done td { background: #ffd7d7; border-bottom: 0.4pt solid #fca5a5; }
+tr.row-done .c-name { color: #991b1b; }
+
+.c-no  { text-align: center; color: #9b8878; font-size: 7pt; vertical-align: middle; }
+.c-han { font-size: 7.5pt; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.c-wari{ vertical-align: middle; text-align: center; }
+.c-name{ font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 8.5pt; }
+.c-addr{ font-size: 7pt; color: #374151; word-break: break-all; }
+.c-st  { vertical-align: middle; text-align: center; }
+
+.wbadge { display: inline-flex; align-items: center; justify-content: center; color: #fff; font-weight: 900; font-size: 7.5pt; width: 14pt; height: 14pt; border-radius: 2.5pt; }
+.stag { display: inline-block; font-size: 7pt; font-weight: 700; padding: 1px 4px; border-radius: 8pt; white-space: nowrap; }
+
+.footer { margin-top: 3mm; font-size: 6.5pt; color: #b0a090; text-align: right; }
+</style></head><body>
+
+<div class="header">
+  <div class="title">🇳🇵 ネパール人総会 結集名簿</div>
+  <div class="meta">出力日：${dateStr}　総数：${data.length}名</div>
+</div>
+
+<div class="summary">
+  <div class="sum-item"><span class="sum-dot" style="background:#fee2e2;border:1pt solid #fca5a5"></span><span class="sum-label">申込済み：</span><span class="sum-count" style="color:#991b1b">${countDone}名</span></div>
+  <div class="sum-item"><span class="sum-dot" style="background:#dcfce7;border:1pt solid #86efac"></span><span class="sum-label">確定：</span><span class="sum-count" style="color:#166534">${countKakutei}名</span></div>
+  <div class="sum-item"><span class="sum-dot" style="background:#fef9c3;border:1pt solid #fcd34d"></span><span class="sum-label">未定：</span><span class="sum-count" style="color:#92400e">${countMitei}名</span></div>
+  <div class="sum-item" style="margin-left:auto;color:#7a6a5a">済み＋確定：<strong>${countDone+countKakutei}名</strong></div>
+</div>
+
+<table>
+  <colgroup><col class="c1"><col class="c2"><col class="c3"><col class="c4"><col class="c5"><col class="c6"></colgroup>
+  <thead><tr><th>#</th><th>班名</th><th>割振り</th><th>氏名</th><th>住所</th><th>申込</th></tr></thead>
+  <tbody>${rows}</tbody>
+</table>
+<div class="footer">ネパール人総会 結集名簿 — ${dateStr}</div>
+
+<script>
+window.onload = function() {
+  // 印刷ダイアログを開く
+  window.print();
+};
+window.onafterprint = function() {
+  window.close();
+};
+<\/script>
+</body></html>`;
+
+  // Blobでダウンロード可能なHTMLファイルとしても保存できるよう両方対応
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+
+  // 新しいタブで開いて印刷（PDFで保存）
+  const w = window.open(url, '_blank');
+  if (!w) {
+    // ポップアップブロックされた場合はダウンロード
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ネパール総会名簿_${new Date().toISOString().slice(0,10)}.html`;
+    a.click();
+    toast('HTMLファイルをダウンロードしました（ブラウザで開いて印刷→PDF保存）');
+  } else {
+    toast('印刷ダイアログが開きます → 「PDFに保存」を選択してください');
+  }
+}
 
 // ---- パスワード ----
 function checkPw() {
