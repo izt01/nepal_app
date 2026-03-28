@@ -880,29 +880,31 @@ async function delSched(fbKey, shop) {
 }
 
 // ======== OneSignal 通知 ========
-// ⚠️ ここにOneSignalのApp IDを入力してください
 const ONESIGNAL_APP_ID = 'e8eff513-49f0-400d-a17a-3299ded9bf4f';
+const OS_REST_KEY = 'os_v2_app_5dx7ke2j6baa3il2gkm55wn7j5sy4wchpokelw4274bz7lqzi7uh7i5cbkknz3qqjiwfzgxtuqbmtv7btdgjm5dga3wdaycefjj2qai';
 
 let osReady = false;
 
+window.OneSignalDeferred = window.OneSignalDeferred || [];
+
 async function initOneSignal() {
-  if (!ONESIGNAL_APP_ID || ONESIGNAL_APP_ID === 'ここにApp IDを貼り付け') return;
+  if (!ONESIGNAL_APP_ID) return;
   try {
-    await window.OneSignalDeferred?.push(async (os) => {
+    window.OneSignalDeferred.push(async function(os) {
       await os.init({
         appId: ONESIGNAL_APP_ID,
-        serviceWorkerPath: '/OneSignalSDKWorker.js',
         notifyButton: { enable: false },
         allowLocalhostAsSecureOrigin: true,
       });
       osReady = true;
 
-      const isSubscribed = await os.User.PushSubscription.optedIn;
-      if (!isSubscribed) {
+      const permission = os.Notifications.permission;
+      const subscribed = os.User.PushSubscription.optedIn;
+
+      if (!permission || !subscribed) {
         document.getElementById('notifBanner').style.display = 'flex';
       } else {
         document.getElementById('notifBanner').style.display = 'none';
-        setLive(true);
       }
     });
   } catch(e) {
@@ -911,37 +913,31 @@ async function initOneSignal() {
 }
 
 async function requestNotifPermission() {
-  if (!ONESIGNAL_APP_ID || ONESIGNAL_APP_ID === 'ここにApp IDを貼り付け') {
-    toast('OneSignalのApp IDが設定されていません');
-    return;
-  }
   try {
-    await window.OneSignalDeferred?.push(async (os) => {
-      await os.Notifications.requestPermission();
-      const granted = await os.Notifications.permission;
-      if (granted) {
+    window.OneSignalDeferred.push(async function(os) {
+      const result = await os.Notifications.requestPermission();
+      if (result) {
+        await os.User.PushSubscription.optIn();
         document.getElementById('notifBanner').style.display = 'none';
         toast('通知を許可しました ✓');
         osReady = true;
       } else {
-        toast('通知が拒否されました');
+        toast('通知が拒否されました。ブラウザの設定から許可してください。');
       }
     });
   } catch(e) {
+    console.warn('Permission request failed:', e);
     toast('通知の設定に失敗しました');
   }
 }
 
 async function pushNotif(title, body) {
-  if (!ONESIGNAL_APP_ID || ONESIGNAL_APP_ID === 'ここにApp IDを貼り付け') return;
-  // OneSignal REST API経由で全員に送信
+  if (!ONESIGNAL_APP_ID) return;
   try {
-    await fetch(`https://onesignal.com/api/v1/notifications`, {
+    await fetch('https://onesignal.com/api/v1/notifications', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        // REST API Keyはサーバー側に置くべきですが、
-        // 簡易利用のためここに入力してください
         'Authorization': `Basic ${OS_REST_KEY}`
       },
       body: JSON.stringify({
@@ -952,12 +948,10 @@ async function pushNotif(title, body) {
         url: window.location.href,
       })
     });
-  } catch(e) {}
+  } catch(e) {
+    console.warn('pushNotif failed:', e);
+  }
 }
-
-// OneSignal REST API Key（サーバーサイドキー）
-// ⚠️ ここにREST API Keyを入力してください
-const OS_REST_KEY = 'os_v2_app_5dx7ke2j6baa3il2gkm55wn7j5sy4wchpokelw4274bz7lqzi7uh7i5cbkknz3qqjiwfzgxtuqbmtv7btdgjm5dga3wdaycefjj2qai';
 
 function sendManualNotif(shop, date) {
   pushNotif('📅 予定のお知らせ', `${shop}（${date}）の予定があります`);
